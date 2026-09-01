@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KFC: Cyber Kitchen 2088 | Kingdom of Fried Culinary</title>
+  <meta name="description" content="KFC Cyber Kitchen 2088 - A futuristic fast-food empire simulation, real-time physics particle cooking lab, procedural synth sound engine, and drone delivery tycoon.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="cyber-theme">
+  <!-- CRT Screen Scanline Overlay -->
+  <div class="crt-overlay" id="crtOverlay"></div>
+  <div class="vignette-overlay"></div>
+
+  <!-- Ambient Glow Backdrop -->
+  <div class="cyber-glow-bg">
+    <div class="glow-orb glow-red"></div>
+    <div class="glow-orb glow-cyan"></div>
+    <div class="glow-orb glow-amber"></div>
+  </div>
+
+  <div class="app-container" id="appContainer">
+    <!-- Top Master HUD Header -->
+    <header class="master-header">
+      <div class="brand-badge">
+        <div class="logo-box">
+          <span class="logo-glitch" data-text="KFC">KFC</span>
+        </div>
+        <div class="brand-titles">
+          <h1 class="brand-title">KINGDOM OF FRIED CULINARY</h1>
+          <span class="brand-subtitle">CYBERNETIC KITCHEN EMPIRE &bull; PROTOCOL 2088.4</span>
+        </div>
+      </div>
+
+      <!-- Live Resource Ticker -->
+      <div class="resource-hud">
+        <div class="hud-item hud-credits" title="Cyber Credits">
+          <span class="hud-icon">&euro;</span>
+          <div class="hud-meta">
+            <span class="hud-label">CREDITS</span>
+            <span class="hud-value" id="valCredits">1,500.00</span>
+          </div>
+        </div>
+
+        <div class="hud-item hud-rep" title="Culinary Reputation">
+          <span class="hud-icon">&starf;</span>
+          <div class="hud-meta">
+            <span class="hud-label">REPUTATION</span>
+            <span class="hud-value" id="valRep">100 / 100</span>
+          </div>
+        </div>
+
+        <div class="hud-item hud-level" title="Empire Level">
+          <span class="hud-icon">&Delta;</span>
+          <div class="hud-meta">
+            <span class="hud-label">TIER / LEVEL</span>
+            <span class="hud-value" id="valLevel">LVL 1 (ROOKIE)</span>
+          </div>
+        </div>
+
+        <div class="hud-item hud-time" title="Simulation Time & Weather">
+          <span class="hud-icon">&#9201;</span>
+          <div class="hud-meta">
+            <span class="hud-label">SHIFT CLOCK</span>
+            <span class="hud-value" id="valClock">DAY 1 &bull; 08:00</span>
+          </div>
+        </div>
+
+        <div class="hud-item hud-weather" title="Atmospheric Conditions">
+          <span class="hud-icon" id="iconWeather">&#9728;</span>
+          <div class="hud-meta">
+            <span class="hud-label">METEO</span>
+            <span class="hud-value" id="valWeather">NEON CLEAR</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Toolbar -->
+      <div class="header-actions">
+        <button class="btn-hud-tool" id="btnToggleAudio" title="Toggle Synthesizer Music/SFX">
+          <span class="tool-icon" id="iconAudio">&#128266;</span>
+          <span class="tool-txt">SYNTH ON</span>
+        </button>
+        <button class="btn-hud-tool" id="btnToggleCrt" title="Toggle Retro CRT Scanlines">
+          <span class="tool-icon">&#128250;</span>
+          <span class="tool-txt">CRT FX</span>
+        </button>
+        <button class="btn-hud-tool" id="btnQuickSave" title="Save Game State to Storage">
+          <span class="tool-icon">&#128190;</span>
+          <span class="tool-txt">SAVE</span>
+        </button>
+        <button class="btn-hud-tool" id="btnOpenSettings" title="Configure Empire Settings">
+          <span class="tool-icon">&#9881;</span>
+          <span class="tool-txt">SYSTEM</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Global Visualizer & Ticker Bar -->
+    <div class="sub-header-ticker">
+      <div class="ticker-left">
+        <span class="ticker-tag">ALERT FEED:</span>
+        <div class="ticker-marquee-wrapper">
+          <div class="ticker-marquee" id="systemNewsTicker">
+            [WELCOME] Cyber Kitchen 2088 initialized. Fryers at nominal temperature. Secret 11 Herbs & Spices locked in high-security vault.
+          </div>
+        </div>
+      </div>
+      <div class="ticker-right">
+        <div class="audio-viz-wrapper">
+          <canvas id="canvasAudioViz" width="160" height="24"></canvas>
+          <span class="viz-label">AUDIO OSC</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Navigation Workstations -->
+    <nav class="cyber-tabs-nav" id="mainTabsNav">
+      <button class="tab-btn active" data-tab="tab-kitchen" id="tabNavKitchen">
+        <span class="tab-num">01</span>
+        <span class="tab-title">KITCHEN FRY BAY</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-stacker" id="tabNavStacker">
+        <span class="tab-num">02</span>
+        <span class="tab-title">PHYSICS STACK LAB</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-alchemy" id="tabNavAlchemy">
+        <span class="tab-num">03</span>
+        <span class="tab-title">11 SPICE ALCHEMY</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-pos" id="tabNavPos">
+        <span class="tab-num">04</span>
+        <span class="tab-title">POS CASHIER & ORDERS</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-drone" id="tabNavDrone">
+        <span class="tab-num">05</span>
+        <span class="tab-title">DRONE RADAR FLEET</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-analytics" id="tabNavAnalytics">
+        <span class="tab-num">06</span>
+        <span class="tab-title">FINANCIAL ANALYTICS</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-research" id="tabNavResearch">
+        <span class="tab-num">07</span>
+        <span class="tab-title">TECH RESEARCH TREE</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-audio" id="tabNavAudio">
+        <span class="tab-num">08</span>
+        <span class="tab-title">SYNTH AUDIO STUDIO</span>
+      </button>
+    </nav>
+
+    <!-- Main Dynamic Content Deck -->
+    <main class="main-deck">
+
+      <!-- ================= TAB 1: KITCHEN FRY BAY ================= -->
+      <section class="tab-content-panel active" id="tab-kitchen">
+        <div class="kitchen-grid-layout">
+          
+          <!-- Left: Deep Fryer Particle Simulation Canvas -->
+          <div class="cyber-panel panel-fryer-visual">
+            <div class="panel-head">
+              <span class="panel-badge">FRYER BAY &bull; THERMAL 185&deg;C</span>
+              <h2 class="panel-heading">QUANTUM HYDRO-FRYER UNIT #01</h2>
+              <div class="panel-controls">
+                <button class="btn-micro" id="btnCleanOil">CLEAN OIL</button>
+                <button class="btn-micro btn-highlight" id="btnTurboHeat">TURBO HEAT</button>
+              </div>
+            </div>
+            <div class="canvas-container fryer-canvas-box">
+              <canvas id="canvasFryer" width="640" height="380"></canvas>
+              <div class="fryer-hud-overlay">
+                <div class="fryer-stat-pill">
+                  <span class="pill-k">OIL TEMP:</span>
+                  <span class="pill-v" id="txtOilTemp">185.0 &deg;C</span>
+                </div>
+                <div class="fryer-stat-pill">
+                  <span class="pill-k">CRUNCH RATING:</span>
+                  <span class="pill-v" id="txtCrunchScore">98.4%</span>
+                </div>
+                <div class="fryer-stat-pill">
+                  <span class="pill-k">PURITY:</span>
+                  <span class="pill-v" id="txtOilPurity">100%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fryer Interactive Controls -->
+            <div class="fryer-action-bar">
+              <div class="batch-selector">
+                <label for="selectFryRecipe">SELECT RECIPE TO FRY:</label>
+                <select id="selectFryRecipe" class="cyber-select">
+                  <option value="original_crispy">Original Recipe Drumstick (11 Spices)</option>
+                  <option value="hot_spicy_wings">Cyber Hot & Spicy Wings</option>
+                  <option value="neon_tenders">Neon Electro Crispy Tenders</option>
+                  <option value="gravy_loaded_fries">Gravy Loaded Cyber-Fries</option>
+                  <option value="colonel_zenith_burger">Colonel Zenith Super-Burger</option>
+                </select>
+              </div>
+              <button class="btn-cyber btn-primary btn-large" id="btnStartFrying">
+                <span class="btn-glitch-text">DROP BATCH IN OIL (&euro;15.00)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: Kitchen Status & Automated Cooking Line -->
+          <div class="cyber-panel panel-kitchen-queue">
+            <div class="panel-head">
+              <span class="panel-badge">INVENTORY & ACTIVE BATCHES</span>
+              <h2 class="panel-heading">HEATED HOLDING WARMER</h2>
+            </div>
+            
+            <div class="cooked-inventory-list" id="cookedInventoryList">
+              <!-- Dynamically populated stock items -->
+            </div>
+
+            <div class="panel-divider"></div>
+
+            <div class="panel-head sub-head">
+              <span class="panel-badge">LIVE APPLIANCE MONITORS</span>
+              <h3 class="panel-subheading">KITCHEN TELEMETRY</h3>
+            </div>
+
+            <div class="telemetry-grid">
+              <div class="telemetry-gauge">
+                <div class="gauge-title">PRESSURE FRYER PRESSURE</div>
+                <div class="cyber-progress-bar">
+                  <div class="bar-fill" id="barPressure" style="width: 78%;"></div>
+                </div>
+                <div class="gauge-readout"><span id="txtPressureVal">15.2</span> PSI (OPTIMAL)</div>
+              </div>
+
+              <div class="telemetry-gauge">
+                <div class="gauge-title">SPICE DISPENSER CALIBRATION</div>
+                <div class="cyber-progress-bar">
+                  <div class="bar-fill cyan-fill" id="barSpiceFlow" style="width: 92%;"></div>
+                </div>
+                <div class="gauge-readout"><span id="txtSpiceFlowVal">99.8</span>% PURITY</div>
+              </div>
+
+              <div class="telemetry-gauge">
+                <div class="gauge-title">GREASE TRAP BIO-FILTER</div>
+                <div class="cyber-progress-bar">
+                  <div class="bar-fill amber-fill" id="barGreaseTrap" style="width: 24%;"></div>
+                </div>
+                <div class="gauge-readout"><span id="txtGreaseVal">24.0</span>% LOAD</div>
+              </div>
+            </div>
+
+            <!-- Auto-Cook Automation Upgrades Quick Toggle -->
+            <div class="auto-cook-box">
+              <div class="auto-cook-header">
+                <span>AI AUTO-FRY ROBOT (T-800 CHEF)</span>
+                <label class="cyber-switch">
+                  <input type="checkbox" id="chkAutoFry">
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <p class="auto-cook-desc">Automatically drops chicken batches when warmer stock falls below 3 units. Consumes raw stock and energy credits.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 2: PHYSICS STACK LAB ================= -->
+      <section class="tab-content-panel" id="tab-stacker">
+        <div class="stacker-layout">
+          <!-- Left: Burger Physics Canvas -->
+          <div class="cyber-panel stacker-canvas-panel">
+            <div class="panel-head">
+              <span class="panel-badge">2D RIGID BODY SIMULATION</span>
+              <h2 class="panel-heading">GRAVITY BURGER & TOWER STACKER LAB</h2>
+              <div class="stacker-score-badge">
+                <span>TOWER HEIGHT: <strong id="txtStackHeight">0</strong> MM</span>
+                <span>BALANCE: <strong id="txtStackBalance">100%</strong></span>
+              </div>
+            </div>
+
+            <div class="canvas-container stacker-canvas-box">
+              <canvas id="canvasStacker" width="700" height="420"></canvas>
+            </div>
+
+            <div class="stacker-controls-bar">
+              <div class="ingredient-buttons-carousel" id="stackerIngredientButtons">
+                <button class="btn-ingredient" data-type="bottom_bun">BOTTOM BUN</button>
+                <button class="btn-ingredient" data-type="crispy_patty">CRISPY PATTY</button>
+                <button class="btn-ingredient" data-type="melted_cheese">NEON CHEESE</button>
+                <button class="btn-ingredient" data-type="spicy_slaw">KFC SLAW</button>
+                <button class="btn-ingredient" data-type="pickles">CYBER PICKLE</button>
+                <button class="btn-ingredient" data-type="secret_sauce">11-SAUCE</button>
+                <button class="btn-ingredient" data-type="bacon_strip">SMOKED BACON</button>
+                <button class="btn-ingredient" data-type="top_bun">TOP BUN</button>
+              </div>
+              <div class="stacker-action-btns">
+                <button class="btn-cyber btn-danger" id="btnClearStacker">CLEAR TOWER</button>
+                <button class="btn-cyber btn-primary" id="btnEvaluateStacker">SERVE TO VIP GUEST</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Physics Instructions & Tower Analytics -->
+          <div class="cyber-panel stacker-info-panel">
+            <div class="panel-head">
+              <span class="panel-badge">TORQUE & STRUCTURAL INTEGRITY</span>
+              <h3 class="panel-heading">STACK TELEMETRY</h3>
+            </div>
+
+            <div class="stack-physics-stats">
+              <div class="stat-card">
+                <div class="sc-label">TOTAL LAYERS</div>
+                <div class="sc-value" id="txtTotalLayers">0</div>
+              </div>
+              <div class="stat-card">
+                <div class="sc-label">CENTER OF MASS OFFSET</div>
+                <div class="sc-value" id="txtCenterOfMass">0.0 px</div>
+              </div>
+              <div class="stat-card">
+                <div class="sc-label">ESTIMATED FLAVOR VALUE</div>
+                <div class="sc-value" id="txtFlavorValue">&euro;0.00</div>
+              </div>
+              <div class="stat-card">
+                <div class="sc-label">CRUNCH LEVEL</div>
+                <div class="sc-value" id="txtTowerCrunch">100%</div>
+              </div>
+            </div>
+
+            <div class="panel-divider"></div>
+
+            <div class="stack-recipe-challenges">
+              <h4 class="sub-title">VIP CHEF CHALLENGES</h4>
+              <div class="challenge-card" id="challengeCard">
+                <div class="ch-title">"THE GIGA-COLONEL 8-TIER TOWER"</div>
+                <div class="ch-desc">Stack at least 1 Bottom Bun, 3 Crispy Patties, 2 Cheeses, 1 Slaw, and 1 Top Bun with >85% balance.</div>
+                <div class="ch-reward">REWARD: +&euro;500.00 &bull; +50 REPUTATION</div>
+                <button class="btn-cyber btn-micro btn-highlight" id="btnClaimChallenge">CLAIM REWARD</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 3: 11 SPICE ALCHEMY LAB ================= -->
+      <section class="tab-content-panel" id="tab-alchemy">
+        <div class="alchemy-grid">
+          <!-- Left: 11 Spices Matrix Formulator -->
+          <div class="cyber-panel alchemy-formulator">
+            <div class="panel-head">
+              <span class="panel-badge">CLASSIFIED RECIPE MATRIX</span>
+              <h2 class="panel-heading">11 SECRET HERBS & SPICES SYNTHESIZER</h2>
+              <button class="btn-micro btn-highlight" id="btnResetSpiceRatios">RESET TO DEFAULT</button>
+            </div>
+
+            <p class="alchemy-intro">Adjust the molecular ratios of the legendary 11 herbs & spices. Higher synergy unlocks elite flavor multipliers and ecstatic customer sentiment.</p>
+
+            <div class="spice-sliders-grid" id="spiceSlidersContainer">
+              <!-- 11 Spices dynamically generated with interactive range sliders -->
+            </div>
+
+            <div class="alchemy-footer-bar">
+              <button class="btn-cyber btn-primary btn-large" id="btnSynthesizeSpiceBlend">
+                <span>SYNTHESIZE NEW SECRET FORMULA</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: Flavor Radar & Chemical Analysis -->
+          <div class="cyber-panel alchemy-analysis">
+            <div class="panel-head">
+              <span class="panel-badge">SPECTROMETER ANALYSIS</span>
+              <h2 class="panel-heading">ORGANOLEPTIC FLAVOR PROFILE</h2>
+            </div>
+
+            <!-- Custom Canvas Flavor Radar Chart -->
+            <div class="radar-chart-box">
+              <canvas id="canvasFlavorRadar" width="360" height="320"></canvas>
+            </div>
+
+            <div class="flavor-metrics-readout">
+              <div class="f-metric">
+                <span class="f-name">UMAMI INTENSITY:</span>
+                <div class="cyber-progress-bar"><div class="bar-fill" id="barUmami" style="width: 85%;"></div></div>
+                <span class="f-num" id="txtUmamiVal">85%</span>
+              </div>
+              <div class="f-metric">
+                <span class="f-name">AROMATIC COMPLEXITY:</span>
+                <div class="cyber-progress-bar"><div class="bar-fill cyan-fill" id="barAroma" style="width: 90%;"></div></div>
+                <span class="f-num" id="txtAromaVal">90%</span>
+              </div>
+              <div class="f-metric">
+                <span class="f-name">PEPPERY HEAT BITE:</span>
+                <div class="cyber-progress-bar"><div class="bar-fill amber-fill" id="barHeat" style="width: 60%;"></div></div>
+                <span class="f-num" id="txtHeatVal">60%</span>
+              </div>
+              <div class="f-metric">
+                <span class="f-name">CRISPNESS CATALYST:</span>
+                <div class="cyber-progress-bar"><div class="bar-fill" id="barCatalyst" style="width: 95%;"></div></div>
+                <span class="f-num" id="txtCatalystVal">95%</span>
+              </div>
+            </div>
+
+            <div class="recipe-signature-box">
+              <div class="sig-label">REGISTERED RECIPE CODENAME:</div>
+              <div class="sig-title" id="txtRecipeCodename">"NEO-KENTUCKY SUPREME PROTOCOL"</div>
+              <div class="sig-multiplier">CUSTOMER PRICE MULTIPLIER: <strong id="txtPriceMultiplier">1.45x</strong></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 4: POS CASHIER & ORDERS ================= -->
+      <section class="tab-content-panel" id="tab-pos">
+        <div class="pos-workspace-layout">
+          
+          <!-- Left: Live Customer Queue & Incoming Orders -->
+          <div class="cyber-panel pos-queue-panel">
+            <div class="panel-head">
+              <span class="panel-badge">REAL-TIME CUSTOMER AI</span>
+              <h2 class="panel-heading">NEO-DRIVE-THRU & COUNTER QUEUE</h2>
+              <span class="queue-counter" id="txtQueueCount">3 CUSTOMERS IN LINE</span>
+            </div>
+
+            <div class="customer-queue-lane" id="customerQueueLane">
+              <!-- Dynamically populated AI customer cards -->
+            </div>
+          </div>
+
+          <!-- Center: POS Cashier Register & Menu Selection -->
+          <div class="cyber-panel pos-register-panel">
+            <div class="panel-head">
+              <span class="panel-badge">DIGITAL CASHIER TERMINAL #04</span>
+              <h2 class="panel-heading">MENU DISPATCH & COMBO BUILDER</h2>
+            </div>
+
+            <div class="menu-items-grid" id="posMenuItemsGrid">
+              <!-- Menu Items Buttons dynamically injected -->
+            </div>
+
+            <div class="panel-divider"></div>
+
+            <div class="pos-active-cart">
+              <div class="cart-header">
+                <span>ORDER TICKET (#<span id="txtOrderTicketId">8042</span>)</span>
+                <button class="btn-micro btn-danger" id="btnClearCart">CLEAR TICKET</button>
+              </div>
+              
+              <div class="cart-items-list" id="cartItemsList">
+                <!-- Items added to ticket -->
+              </div>
+
+              <div class="cart-totals">
+                <div class="total-row"><span>SUBTOTAL:</span><span id="txtCartSubtotal">&euro;0.00</span></div>
+                <div class="total-row"><span>NEO-CITY TAX (10%):</span><span id="txtCartTax">&euro;0.00</span></div>
+                <div class="total-row grand-total"><span>TOTAL:</span><span id="txtCartTotal">&euro;0.00</span></div>
+              </div>
+
+              <div class="cart-checkout-actions">
+                <button class="btn-cyber btn-primary btn-large" id="btnProcessPayment">
+                  <span>SERVE & COLLECT PAYMENT (ENTER)</span>
+                </button>
+                <button class="btn-cyber btn-highlight" id="btnDispatchDroneOrder">
+                  <span>DISPATCH VIA DRONE</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Digital Receipt Printer & Cashier Stats -->
+          <div class="cyber-panel pos-receipt-panel">
+            <div class="panel-head">
+              <span class="panel-badge">HOLOGRAPHIC THERMAL PRINTER</span>
+              <h3 class="panel-heading">LIVE TRANSACTION RECEIPT</h3>
+            </div>
+
+            <div class="receipt-paper" id="receiptPaper">
+              <div class="rc-header">
+                <div class="rc-logo">*** KFC CYBERNETICS ***</div>
+                <div class="rc-branch">SECTOR 7-G MEGA CITY</div>
+                <div class="rc-date" id="rcTimestamp">2088-09-01 12:45:00</div>
+              </div>
+              <div class="rc-divider">--------------------------------</div>
+              <div class="rc-body" id="rcItemsBody">
+                <div class="rc-line"><span>1x Original Drumstick</span><span>&euro;12.00</span></div>
+                <div class="rc-line"><span>1x Gravy Cyber-Fries</span><span>&euro;6.50</span></div>
+              </div>
+              <div class="rc-divider">--------------------------------</div>
+              <div class="rc-footer">
+                <div class="rc-line bold"><span>TOTAL PAID:</span><span id="rcTotalPaid">&euro;18.50</span></div>
+                <div class="rc-line"><span>PAYMENT METHOD:</span><span>NEO-CREDIT CHIP</span></div>
+                <div class="rc-quote">"IT'S FINGER LICKIN' CYBERNETIC!"</div>
+              </div>
+            </div>
+
+            <div class="shift-stats-box">
+              <div class="ss-row"><span>SHIFT ORDERS SERVED:</span><strong id="txtShiftOrders">0</strong></div>
+              <div class="ss-row"><span>AVERAGE PATIENCE:</span><strong id="txtAvgPatience">94%</strong></div>
+              <div class="ss-row"><span>TIPS COLLECTED:</span><strong id="txtShiftTips">&euro;0.00</strong></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= TAB 5: DRONE RADAR FLEET ================= -->
+      <section class="tab-content-panel" id="tab-drone">
+        <div class="drone-layout">
+          
+          <!-- Left: Radar Screen Canvas -->
+          <div class="cyber-panel drone-radar-panel">
+            <div class="panel-head">
+              <span class="panel-badge">AIRSPACE NAVIGATION RADAR &bull; 1000M RANGE</span>
+              <h2 class="panel-heading">AUTONOMOUS DELIVERY DRONE TRACKER</h2>
+              <div class="drone-radar-actions">
+                <button class="btn-micro" id="btnLaunchReconDrone">+ BUY DRONE (&euro;500)</button>
+                <button class="btn-micro btn-highlight" id="btnTurboDroneSpeed">OVERCLOCK ENGINES</button>
+              </div>
+            </div>
+
+            <div class="canvas-container radar-canvas-box">
+              <canvas id="canvasRadar" width="680" height="420"></canvas>
+              <div class="radar-scan-line"></div>
+            </div>
+
+            <div class="radar-legend">
+              <span class="legend-item"><span class="dot dot-hub"></span> KFC HUB</span>
+              <span class="legend-item"><span class="dot dot-drone"></span> ACTIVE DRONES</span>
+              <span class="legend-item"><span class="dot dot-customer"></span> DELIVERY DESTINATION</span>
+              <span class="legend-item"><span class="dot dot-storm"></span> WEATHER STORM CELL</span>
+            </div>
+          </div>
+
+          <!-- Right: Drone Fleet Status & Log -->
+          <div class="cyber-panel drone-fleet-panel">
+            <div class="panel-head">
+              <span class="panel-badge">TELEMETRY & BATTERY</span>
+              <h3 class="panel-heading">FLEET SQUADRON (ACTIVE: <span id="txtActiveDroneCount">3</span>)</h3>
+            </div>
+
+            <div class="drone-cards-list" id="droneCardsList">
+              <!-- Dynamically populated drone telemetry cards -->
+            </div>
+
+            <div class="panel-divider"></div>
+
+            <div class="drone-flight-logs">
+              <h4 class="sub-title">FLIGHT DISPATCH COMMS</h4>
+              <div class="cyber-terminal-box" id="droneTerminalLogs">
+                <div class="t-line">[08:00:12] KFC-DRONE-01 departed Hub with Order #8041.</div>
+                <div class="t-line">[08:01:45] KFC-DRONE-02 avoiding low-altitude ionic lightning.</div>
+                <div class="t-line">[08:02:10] KFC-DRONE-01 successfully delivered to Penthouse 42B.</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= TAB 6: FINANCIAL ANALYTICS ================= -->
+      <section class="tab-content-panel" id="tab-analytics">
+        <div class="analytics-layout">
+          
+          <!-- Top Metric Cards -->
+          <div class="analytics-metric-cards">
+            <div class="cyber-card metric-card">
+              <span class="mc-title">TOTAL REVENUE (LIFETIME)</span>
+              <div class="mc-val" id="txtAnalyticsRevenue">&euro;12,450.00</div>
+              <span class="mc-trend trend-up">&#9650; +18.4% this shift</span>
+            </div>
+            <div class="cyber-card metric-card">
+              <span class="mc-title">NET PROFIT MARGIN</span>
+              <div class="mc-val" id="txtAnalyticsMargin">68.5%</div>
+              <span class="mc-trend trend-up">&#9650; High Efficiency</span>
+            </div>
+            <div class="cyber-card metric-card">
+              <span class="mc-title">TOTAL CHICKEN SOLD</span>
+              <div class="mc-val" id="txtAnalyticsChickenCount">1,248 PCS</div>
+              <span class="mc-trend trend-neutral">&bull; 42 pcs / hr</span>
+            </div>
+            <div class="cyber-card metric-card">
+              <span class="mc-title">COMMODITY INVENTORY VALUE</span>
+              <div class="mc-val" id="txtAnalyticsStockVal">&euro;3,820.00</div>
+              <span class="mc-trend trend-down">&#9660; Raw spice inflation</span>
+            </div>
+          </div>
+
+          <!-- Center Charts Row -->
+          <div class="analytics-charts-grid">
+            <!-- Chart 1: Revenue Line Chart -->
+            <div class="cyber-panel">
+              <div class="panel-head">
+                <span class="panel-badge">REAL-TIME TREND</span>
+                <h3 class="panel-heading">HOURLY REVENUE STREAM (&euro;)</h3>
+              </div>
+              <div class="chart-canvas-box">
+                <canvas id="canvasChartRevenue" width="520" height="260"></canvas>
+              </div>
+            </div>
+
+            <!-- Chart 2: Menu Sales Breakdown (Donut/Pie) -->
+            <div class="cyber-panel">
+              <div class="panel-head">
+                <span class="panel-badge">PRODUCT DISTRIBUTION</span>
+                <h3 class="panel-heading">TOP SELLING FORMULAS</h3>
+              </div>
+              <div class="chart-canvas-box">
+                <canvas id="canvasChartProductShare" width="520" height="260"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom: Commodity Stock Market & Supply Trading -->
+          <div class="cyber-panel raw-commodities-panel">
+            <div class="panel-head">
+              <span class="panel-badge">NEO-CHICAGO COMMODITY EXCHANGE</span>
+              <h3 class="panel-heading">RAW INGREDIENTS SPOT MARKET & BULK PURCHASING</h3>
+            </div>
+            <div class="market-table-wrapper">
+              <table class="cyber-table" id="tableCommodities">
+                <thead>
+                  <tr>
+                    <th>COMMODITY</th>
+                    <th>IN-STOCK</th>
+                    <th>MARKET PRICE</th>
+                    <th>24H TREND</th>
+                    <th>ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody id="tbodyCommodities">
+                  <!-- Injected dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= TAB 7: TECH RESEARCH TREE ================= -->
+      <section class="tab-content-panel" id="tab-research">
+        <div class="research-layout">
+          <div class="cyber-panel research-header-panel">
+            <div class="panel-head">
+              <span class="panel-badge">R&D LABORATORIES &bull; DARPA-COLONEL DIVISION</span>
+              <h2 class="panel-heading">CYBERNETIC CULINARY RESEARCH TREE</h2>
+              <div class="tech-points-pill">
+                <span>TECH RESEARCH DATA: <strong id="txtTechPoints">450 TB</strong></span>
+              </div>
+            </div>
+            <p class="research-intro">Unlock automated fryers, quantum pressure cooking, supersonic drone delivery thrusters, and genetic spice cultivars.</p>
+          </div>
+
+          <!-- 3 Research Branches -->
+          <div class="tech-branches-grid">
+            <!-- Branch 1: Kitchen Automation -->
+            <div class="cyber-panel tech-branch">
+              <div class="branch-head">
+                <span class="branch-icon">&#9881;</span>
+                <h3>BRANCH A: AUTOMATION & ROBOTICS</h3>
+              </div>
+              <div class="tech-nodes-list" id="techNodesBranchA">
+                <!-- Injected dynamically -->
+              </div>
+            </div>
+
+            <!-- Branch 2: Flavor Science & Secret Alchemy -->
+            <div class="cyber-panel tech-branch">
+              <div class="branch-head">
+                <span class="branch-icon">&#9879;</span>
+                <h3>BRANCH B: FLAVOR SCIENCE & GENOMICS</h3>
+              </div>
+              <div class="tech-nodes-list" id="techNodesBranchB">
+                <!-- Injected dynamically -->
+              </div>
+            </div>
+
+            <!-- Branch 3: Drone Fleet & Global Logistics -->
+            <div class="cyber-panel tech-branch">
+              <div class="branch-head">
+                <span class="branch-icon">&#9992;</span>
+                <h3>BRANCH C: LOGISTICS & QUANTUM DRONES</h3>
+              </div>
+              <div class="tech-nodes-list" id="techNodesBranchC">
+                <!-- Injected dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 8: SYNTH AUDIO STUDIO ================= -->
+      <section class="tab-content-panel" id="tab-audio">
+        <div class="audio-studio-layout">
+          
+          <!-- Master Synthesizer Controls -->
+          <div class="cyber-panel audio-main-panel">
+            <div class="panel-head">
+              <span class="panel-badge">WEB AUDIO API &bull; 8-VOICE PROCEDURAL SYNTH</span>
+              <h2 class="panel-heading">RETRO-SYNTHWAVE SOUND GENERATOR & MIXER</h2>
+              <div class="audio-studio-toggles">
+                <button class="btn-cyber btn-primary" id="btnStudioPlayMusic">START SYNTH BGM</button>
+                <button class="btn-cyber btn-danger" id="btnStudioStopMusic">STOP BGM</button>
+              </div>
+            </div>
+
+            <!-- Visualizer Big Display -->
+            <div class="audio-scope-box">
+              <canvas id="canvasMasterScope" width="720" height="200"></canvas>
+            </div>
+
+            <!-- Channel Mixing Sliders -->
+            <div class="mixer-channels-grid">
+              <div class="channel-strip">
+                <div class="ch-label">MASTER VOL</div>
+                <input type="range" id="sliderVolMaster" min="0" max="1" step="0.01" value="0.8" class="v-slider">
+                <span class="ch-val" id="txtVolMaster">80%</span>
+              </div>
+
+              <div class="channel-strip">
+                <div class="ch-label">SYNTH BASS</div>
+                <input type="range" id="sliderVolBass" min="0" max="1" step="0.01" value="0.7" class="v-slider">
+                <span class="ch-val" id="txtVolBass">70%</span>
+              </div>
+
+              <div class="channel-strip">
+                <div class="ch-label">LEAD ARPEGGIO</div>
+                <input type="range" id="sliderVolArp" min="0" max="1" step="0.01" value="0.6" class="v-slider">
+                <span class="ch-val" id="txtVolArp">60%</span>
+              </div>
+
+              <div class="channel-strip">
+                <div class="ch-label">DRUM PERCUSSION</div>
+                <input type="range" id="sliderVolDrums" min="0" max="1" step="0.01" value="0.75" class="v-slider">
+                <span class="ch-val" id="txtVolDrums">75%</span>
+              </div>
+
+              <div class="channel-strip">
+                <div class="ch-label">KITCHEN SFX</div>
+                <input type="range" id="sliderVolSfx" min="0" max="1" step="0.01" value="0.85" class="v-slider">
+                <span class="ch-val" id="txtVolSfx">85%</span>
+              </div>
+
+              <div class="channel-strip">
+                <div class="ch-label">REVERB ROOM</div>
+                <input type="range" id="sliderReverb" min="0" max="1" step="0.01" value="0.35" class="v-slider">
+                <span class="ch-val" id="txtValReverb">35%</span>
+              </div>
+            </div>
+
+            <div class="sound-test-triggers">
+              <span class="triggers-title">SOUND EFFECT TRIGGER MATRIX:</span>
+              <div class="triggers-grid">
+                <button class="btn-sfx" data-sfx="fry">HOT SIZZLE FRY</button>
+                <button class="btn-sfx" data-sfx="bite">CRUNCH BITE</button>
+                <button class="btn-sfx" data-sfx="pos">POS SCANNER BEEP</button>
+                <button class="btn-sfx" data-sfx="coin">CREDITS CASH-IN</button>
+                <button class="btn-sfx" data-sfx="drone">DRONE FLYBY</button>
+                <button class="btn-sfx" data-sfx="alarm">VIP SIREN ALERT</button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Sequencer Pattern Inspector -->
+          <div class="cyber-panel audio-sequencer-panel">
+            <div class="panel-head">
+              <span class="panel-badge">16-STEP CHORD MATRIX</span>
+              <h3 class="panel-heading">SYNTHWAVE CHORD PROGRESSIONS</h3>
+            </div>
+            <div class="sequencer-grid-display" id="sequencerStepsGrid">
+              <!-- 16 step indicators -->
+            </div>
+            <div class="bpm-selector-box">
+              <label for="sliderBpm">TEMPO (BPM): <strong id="txtBpm">124</strong></label>
+              <input type="range" id="sliderBpm" min="80" max="160" step="1" value="124" class="cyber-range">
+            </div>
+            <div class="synth-preset-box">
+              <label for="selectSynthScale">MUSICAL SCALE / MOOD:</label>
+              <select id="selectSynthScale" class="cyber-select">
+                <option value="cyber_minor">Cyberpunk D Minor (Blade Runner)</option>
+                <option value="neon_major">Neon City A Major (Uplifting)</option>
+                <option value="synth_dorian">Synthwave E Dorian (Fast Pursuit)</option>
+                <option value="dark_phrygian">Dark Phrygian (Overclocked)</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Status & Terminal Log Bar -->
+    <footer class="master-footer">
+      <div class="footer-terminal">
+        <span class="term-prompt">&gt;_ KERNEL:</span>
+        <span class="term-msg" id="liveKernelMsg">All system subsystems online. KFC OS v4.8 ready.</span>
+      </div>
+      <div class="footer-meta">
+        <span>FPS: <strong id="txtFps">60</strong></span>
+        <span>PARTICLES: <strong id="txtParticleCount">142</strong></span>
+        <span>VERSION: <strong>2088.1.0-STABLE</strong></span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Global Modal: System Settings & State Manager -->
+  <div class="cyber-modal-backdrop" id="modalSettings">
+    <div class="cyber-modal-card">
+      <div class="modal-head">
+        <h3 class="modal-title">&#9881; KFC EMPIRE SYSTEM CONFIG</h3>
+        <button class="modal-close-btn" id="btnCloseSettings">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-group">
+          <label>GRAPHICS & RENDERING QUALITY</label>
+          <select id="selectGfxQuality" class="cyber-select">
+            <option value="high">Ultra High (All Particles & Post-FX)</option>
+            <option value="medium">Medium (Optimized Particles)</option>
+            <option value="low">Low Power Mode</option>
+          </select>
+        </div>
+        <div class="settings-group">
+          <label>GAME TIME SPEED MULTIPLIER</label>
+          <div class="speed-btns">
+            <button class="btn-speed active" data-speed="1">1x (NORMAL)</button>
+            <button class="btn-speed" data-speed="2">2x (FAST)</button>
+            <button class="btn-speed" data-speed="5">5x (TURBO)</button>
+          </div>
+        </div>
+        <div class="settings-group">
+          <label>SAVE DATA MANAGEMENT</label>
+          <div class="save-actions-grid">
+            <button class="btn-cyber btn-primary" id="btnExportSave">EXPORT SAVE JSON</button>
+            <button class="btn-cyber btn-highlight" id="btnImportSave">IMPORT SAVE JSON</button>
+            <button class="btn-cyber btn-danger" id="btnResetGame">HARD RESET PROGRESS</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-cyber btn-primary" id="btnSaveCloseSettings">APPLY & CLOSE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Overlay Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Hidden File Input for Save Import -->
+  <input type="file" id="fileInputSave" accept=".json" style="display: none;">
+
+  <!-- Application Modular Scripts -->
+  <script src="js/audio-engine.js"></script>
+  <script src="js/physics-canvas.js"></script>
+  <script src="js/simulation-engine.js"></script>
+  <script src="js/ui-controller.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
