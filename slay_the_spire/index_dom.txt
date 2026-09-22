@@ -1,0 +1,575 @@
+﻿<!DOCTYPE html>
+<html lang="id"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SHADOWSPIRE: CHRONICLES OF ASCENSION - Roguelike Deckbuilder</title>
+  <meta name="description" content="SHADOWSPIRE: CHRONICLES OF ASCENSION - Dark fantasy roguelike deckbuilder dengan 10 pahlawan unik, 20 skill pasif, mode kesulitan Ascension, sistem prolog naratif, dan pertempuran taktis.">
+
+  <!-- Google Fonts: Cinzel Decorative & Cinzel for Spire headers, Outfit for clean UI, Space Grotesk for stats -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&amp;family=Cinzel:wght@500;700;900&amp;family=Outfit:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/spire-theme.css?v=2">
+  <link rel="stylesheet" href="css/spire-cards.css?v=2">
+  <link rel="stylesheet" href="css/spire-combat.css?v=2">
+  <link rel="stylesheet" href="css/spire-map.css?v=2">
+  <link rel="stylesheet" href="css/spire-modals.css?v=2">
+</head>
+<body>
+
+  <div id="spireAppContainer">
+    <!-- ====================================================================
+         CINEMATIC SCENE TRANSITION CURTAIN
+         ==================================================================== -->
+    <div class="scene-transition-curtain" id="sceneTransitionCurtain"></div>
+
+    <!-- ====================================================================
+         VFX CANVAS LAYER (Partikel, Target B├⌐zier Curve, Floating Numbers)
+         ==================================================================== -->
+    <canvas id="vfxCanvas" width="754" height="487"></canvas>
+
+    <!-- ====================================================================
+         TOP HUD BAR (Persisten di Map & Combat)
+         ==================================================================== -->
+    <header class="top-hud-bar" id="topHud" style="display: none;">
+      <!-- Kiri: HP, Block, Emas, Lantai -->
+      <div class="hud-left">
+        <div class="hud-hero-identity" id="hudHeroIdentity">
+          <span class="hud-hero-icon" id="hudHeroIcon">ΓÜö∩╕Å</span>
+          <span class="hud-hero-name" id="hudHeroName">The Ironclad</span>
+        </div>
+
+        <div class="hud-hp-badge" title="Health Points">
+          <span style="font-size:16px;">Γ¥ñ∩╕Å</span>
+          <div class="hud-hp-bar-track">
+            <div class="hud-hp-bar-fill" id="hudHpFill" style="width: 100%;"></div>
+          </div>
+          <span class="hud-hp-text" id="hudHpText">80 / 80</span>
+        </div>
+
+        <div class="hud-block-badge" id="hudBlockBadge" style="display: none;">
+          ≡ƒ¢í∩╕Å 0
+        </div>
+
+        <div class="hud-gold-badge" title="Emas Pahlawan">
+          <span>≡ƒÆ░</span>
+          <span id="hudGoldText">99</span>
+        </div>
+
+        <div class="hud-floor-badge" id="hudFloorText">Floor 1 (Exordium)</div>
+      </div>
+
+      <!-- Tengah: Sabuk Relic -->
+      <div class="hud-center">
+        <div class="hud-relics-list" id="hudRelics"></div>
+      </div>
+
+      <!-- Kanan: Potion Belt & Navigasi -->
+      <div class="hud-right">
+        <div class="hud-potions-list" id="hudPotions"></div>
+
+        <button class="hud-btn" id="btnViewDeck" onclick="spireApp.openDeckViewerModal('VIEW')">
+          <span>≡ƒâÅ Deck</span>
+          <span class="hud-deck-badge" id="hudDeckCount">10</span>
+        </button>
+
+        <button class="hud-btn" id="btnToggleMap" onclick="spireApp.openMapScreen()">
+          <span>≡ƒù║∩╕Å Peta</span>
+        </button>
+
+        <button class="hud-btn" id="btnOpenSettings" onclick="spireApp.openSettingsModal()" title="Pengaturan">
+          <span>ΓÜÖ∩╕Å</span>
+        </button>
+
+        <button class="hud-btn" id="btnAbandonRun" onclick="spireApp.confirmExitOrAbandon()" title="Keluar / Menyerah">
+          <span>≡ƒÜ¬</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ====================================================================
+         SCREEN 0: INTRO SPLASH SCREEN (ANIMASI MEMASUKI WEBSITE)
+         ==================================================================== -->
+    <section class="screen-view intro-splash-screen active" id="INTRO_SPLASH_SCREEN" onclick="spireApp.enterFromSplashScreen()" style="display: flex;">
+      <div class="splash-particles-bg"></div>
+      <div class="splash-center-content">
+        <div class="splash-runic-seal-wrap">
+          <svg class="splash-seal-svg" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="90" fill="none" stroke="#e03131" stroke-width="2" stroke-dasharray="8 4"></circle>
+            <circle cx="100" cy="100" r="75" fill="none" stroke="#ffd43b" stroke-width="1.5"></circle>
+            <polygon points="100,20 170,140 30,140" fill="none" stroke="#ff6b6b" stroke-width="2"></polygon>
+            <polygon points="100,180 30,60 170,60" fill="none" stroke="#ffd43b" stroke-width="2"></polygon>
+            <circle cx="100" cy="100" r="30" fill="rgba(224, 49, 49, 0.25)" stroke="#ff2a2a" stroke-width="3"></circle>
+            <path d="M 85 100 Q 100 70 115 100 Q 100 130 85 100 Z" fill="#ffd43b"></path>
+          </svg>
+        </div>
+
+        <h1 class="splash-game-title">SHADOWSPIRE</h1>
+        <div class="splash-game-subtitle">CHRONICLES OF ASCENSION</div>
+        <p class="splash-enter-prompt">Γ£ª KLIK ATAU TEKAN TOMBOL APA SAJA UNTUK MEMBUKA GERBANG Γ£ª</p>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCREEN 1: MAIN MENU SCREEN (MULAI CERITA, SETTING, KELUAR)
+         ==================================================================== -->
+    <section class="screen-view main-menu-screen" id="MAIN_MENU_SCREEN" style="display: none;">
+      <div class="menu-dark-backdrop"></div>
+      <div class="menu-content-box">
+        <div class="menu-logo-wrapper">
+          <h1 class="menu-logo-title">SHADOWSPIRE</h1>
+          <div class="menu-logo-subtitle">CHRONICLES OF ASCENSION</div>
+        </div>
+
+        <div class="menu-buttons-list">
+          <button class="menu-btn primary-menu-btn" onclick="spireApp.goToDifficultySelect()">
+            <span class="btn-icon">ΓÜö∩╕Å</span>
+            <span>Mulai Cerita Baru</span>
+          </button>
+
+          <button class="menu-btn" id="btnContinueFromMain" style="display: none;" onclick="spireApp.continueRun()">
+            <span class="btn-icon">≡ƒô£</span>
+            <span>Lanjutkan Perjalanan</span>
+          </button>
+
+          <button class="menu-btn" onclick="spireApp.openSettingsModal()">
+            <span class="btn-icon">ΓÜÖ∩╕Å</span>
+            <span>Pengaturan</span>
+          </button>
+
+          <button class="menu-btn exit-btn" onclick="spireApp.openExitModal()">
+            <span class="btn-icon">≡ƒÜ¬</span>
+            <span>Keluar Game</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCREEN 1.5: DIFFICULTY / ASCENSION SELECTION
+         ==================================================================== -->
+    <section class="screen-view difficulty-screen" id="DIFFICULTY_SCREEN" style="display: none;">
+      <div class="screen-header-banner">
+        <h2 class="screen-banner-title">PILIH TINGKAT KESULITAN</h2>
+        <div class="screen-banner-sub">Tentukan seberapa ganas kutukan Shadowspire yang akan menguji jiwa Anda</div>
+      </div>
+
+      <div class="difficulty-cards-grid" id="difficultyCardsGrid"></div>
+
+      <div class="screen-footer-actions">
+        <button class="spire-btn" onclick="spireApp.switchScreen('MAIN_MENU_SCREEN')">Kembali ke Menu</button>
+        <button class="spire-btn primary-btn" id="btnConfirmDifficulty" onclick="spireApp.confirmDifficultyAndProceed()">Pilih Pahlawan Γ₧ö</button>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCREEN 1.8: HERO SELECTION SHOWCASE (10 HEROES)
+         ==================================================================== -->
+    <section class="screen-view hero-select-screen" id="HERO_SELECT_SCREEN" style="display: none;">
+      <div class="screen-header-banner">
+        <h2 class="screen-banner-title">PILIH PAHLAWAN ANDA</h2>
+      </div>
+
+      <!-- 10-Hero Selection Tabs -->
+      <div class="hero-selector-nav" id="heroSelectorNav"></div>
+
+      <!-- Hero Detail Showcase Stage -->
+      <div class="hero-showcase-stage" id="heroShowcaseStage"></div>
+
+      <!-- Action Buttons -->
+      <div class="screen-footer-actions">
+        <button class="spire-btn" onclick="spireApp.switchScreen('DIFFICULTY_SCREEN')">Kembali</button>
+        <button class="start-btn-primary" id="btnStartAdventure" onclick="spireApp.goToPrologueScreen()">Dengarkan Kisah Pahlawan Γ₧ö</button>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCREEN 1.9: PROLOGUE STORY SCREEN (CERITA UNIK PER KARAKTER)
+         ==================================================================== -->
+    <section class="screen-view prologue-screen" id="PROLOGUE_SCREEN" style="display: none;">
+      <div class="prologue-overlay-card">
+        <div class="prologue-header">
+          <div class="prologue-hero-badge" id="prologueHeroBadge"></div>
+          <div class="prologue-title-wrap">
+            <h2 class="prologue-title" id="prologueTitle">Kisah Masa Lalu</h2>
+            <div class="prologue-subtitle" id="prologueSubtitle">Sebelum Melangkah ke Shadowspire</div>
+          </div>
+        </div>
+
+        <div class="prologue-body">
+          <div class="prologue-hero-art" id="prologueHeroArt"></div>
+          <div class="prologue-narrative-text" id="prologueText"></div>
+        </div>
+
+        <div class="prologue-actions">
+          <button class="spire-btn" onclick="spireApp.switchScreen('HERO_SELECT_SCREEN')">Pilih Pahlawan Lain</button>
+          <button class="start-btn-primary" onclick="spireApp.startNewGameFromPrologue()">
+            <span>Masuki Lantai 1: The Exordium</span>
+            <span style="font-size: 18px;">≡ƒÅ░</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCREEN 2: MAP SCREEN (THE EXORDIUM 15 FLOORS)
+         ==================================================================== -->
+    <section class="screen-view map-screen" id="MAP_SCREEN" style="display: none;">
+      <div class="map-header-banner">
+        <h2 class="map-act-title">ACT 1: THE EXORDIUM</h2>
+        <div class="map-act-subtitle" id="mapActSubtitle">Pilih jalur yang ingin kamu tempuh menuju puncak Shadowspire</div>
+        <div id="mapCombatActiveBanner" style="display: none; margin-top: 10px;">
+          <button class="spire-btn primary-btn" onclick="spireApp.returnToActiveCombat()" style="padding: 10px 24px; font-size: 15px; border-color: #ff6b6b; box-shadow: 0 0 15px rgba(255, 107, 107, 0.6);">
+            ΓÜö∩╕Å Kembali ke Pertempuran
+          </button>
+        </div>
+      </div>
+
+      <div class="map-scroll-wrapper" id="mapScrollWrapper">
+        <svg class="map-lines-svg" id="mapLinesSvg"></svg>
+        <div class="map-nodes-container" id="mapNodesContainer"></div>
+      </div>
+
+      <div class="map-legend-bar">
+        <div class="legend-item"><span>ΓÜö∩╕Å</span> Monster</div>
+        <div class="legend-item"><span>≡ƒæ╣</span> Elite</div>
+        <div class="legend-item"><span>≡ƒÅò∩╕Å</span> Rest Site</div>
+        <div class="legend-item"><span>≡ƒÆ░</span> Merchant</div>
+        <div class="legend-item"><span>Γ¥ô</span> Mystery</div>
+        <div class="legend-item"><span>≡ƒÄü</span> Treasure</div>
+        <div class="legend-item"><span>≡ƒææ</span> Boss</div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCREEN 3: COMBAT SCREEN (TURN-BASED BATTLE ARENA)
+         ==================================================================== -->
+    <section class="screen-view combat-screen" id="COMBAT_SCREEN" style="display: none;">
+      <!-- Background Suasana Dungeon & Anime Battle Atmosphere -->
+      <div class="combat-background">
+        <div class="anime-ember-field" id="animeEmberField"></div>
+        <div class="combat-dungeon-wall">
+          <div class="combat-torch torch-left"></div>
+          <div class="combat-torch torch-right"></div>
+        </div>
+        <div class="combat-dungeon-floor">
+          <div class="ground-summon-circle"></div>
+        </div>
+      </div>
+
+      <!-- Arena Karakter vs Musuh -->
+      <div class="combat-arena" id="combatArena">
+        <!-- Sisi Pemain -->
+        <div class="player-entity-area">
+          <div class="anime-hero-aura" id="playerHeroAura"></div>
+          <div class="player-avatar-wrapper" id="playerAvatar"></div>
+
+          <div class="player-combat-stats">
+            <div class="player-combat-block" id="playerCombatBlock" style="display: none;">≡ƒ¢í∩╕Å 0</div>
+            <div class="player-combat-statuses" id="playerStatuses"></div>
+          </div>
+        </div>
+
+        <!-- Sisi Musuh -->
+        <div class="enemies-battle-area" id="enemiesContainer"></div>
+      </div>
+
+      <!-- UI Bagian Bawah: Orb Energi, Tangan Kartu, Tombol Akhiri Giliran -->
+      <div class="combat-lower-dock">
+        <!-- Orb Energi Anime Multi-Layer -->
+        <div class="energy-orb-container" id="energyOrb">
+          <div class="mana-ring-outer"></div>
+          <div class="mana-ring-inner"></div>
+          <div class="energy-orb-core">
+            <span class="energy-digits" id="energyCount">3/3</span>
+            <span class="energy-label">MANA</span>
+          </div>
+        </div>
+
+        <!-- Tangan Kartu Melengkung (Fan Hand) -->
+        <div class="combat-hand-container" id="combatHand"></div>
+
+        <!-- Tombol Akhiri Giliran -->
+        <button class="end-turn-btn" id="btnEndTurn" onclick="spireCombat.endTurn()">
+          <span>END TURN</span>
+          <span class="end-turn-shortcut">(Tekan 'E')</span>
+        </button>
+
+        <!-- Draw Pile, Discard Pile & Exhaust Pile Counters -->
+        <button class="pile-btn draw-pile-btn" onclick="spireApp.openPileViewerModal('draw')">
+          <span>≡ƒôÑ Draw:</span>
+          <span id="drawPileCount">0</span>
+        </button>
+
+        <button class="pile-btn discard-pile-btn" onclick="spireApp.openPileViewerModal('discard')">
+          <span>≡ƒôñ Discard:</span>
+          <span id="discardPileCount">0</span>
+        </button>
+
+        <button class="pile-btn exhaust-pile-btn" onclick="spireApp.openPileViewerModal('exhaust')">
+          <span>≡ƒöÑ Exhaust:</span>
+          <span id="exhaustPileCount">0</span>
+        </button>
+
+        <!-- Combat Log Button & Sliding Drawer -->
+        <button class="combat-log-btn" id="btnCombatLog" onclick="spireApp.toggleCombatLog()" title="Buka Catatan Pertempuran">
+          <span>≡ƒô£ Log Tempur</span>
+        </button>
+        <div class="combat-log-drawer" id="combatLogDrawer" style="display: none;">
+          <div class="combat-log-header">
+            <span>≡ƒô£ CATATAN PERTEMPURAN</span>
+            <button class="combat-log-close" onclick="spireApp.toggleCombatLog()">Γ£ò</button>
+          </div>
+          <div class="combat-log-feed" id="combatLogFeed">
+            <div class="combat-log-entry turn-header">Pertempuran dimulai...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCREEN 4: CAMPFIRE (REST SITE)
+         ==================================================================== -->
+    <section class="screen-view campfire-screen" id="CAMPFIRE_SCREEN" style="display: none;">
+      <div class="campfire-visual">
+        <div class="campfire-flames"></div>
+      </div>
+      <h2 class="campfire-title">CAMPFIRE (REST SITE)</h2>
+      <p class="campfire-subtitle">Hangatnya perapian memberi sedikit ketenangan sebelum bahaya berikutnya.</p>
+
+      <div class="campfire-options-list">
+        <button class="campfire-opt-btn" onclick="spireApp.chooseCampfireRest()">
+          <span class="opt-icon">≡ƒÆñ</span>
+          <div class="opt-text">
+            <strong>REST (Istirahat)</strong>
+            <p>Pulihkan HP pahlawan.</p>
+          </div>
+        </button>
+
+        <button class="campfire-opt-btn" onclick="spireApp.chooseCampfireSmith()">
+          <span class="opt-icon">≡ƒö¿</span>
+          <div class="opt-text">
+            <strong>SMITH (Perkuat)</strong>
+            <p>Pilih 1 kartu di deck Anda untuk ditingkatkan permanen (+).</p>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCREEN 5: MERCHANT / SHOP
+         ==================================================================== -->
+    <section class="screen-view shop-screen" id="SHOP_SCREEN" style="display: none;">
+      <div class="shop-header-banner">
+        <h2 class="shop-title">MERCHANT OF THE ABYSS</h2>
+        <div class="shop-subtitle">"Selamat datang, pengelana! Emasmu bernilai segalanya di sini..."</div>
+      </div>
+
+      <div class="shop-scroll-area">
+        <div class="shop-shelf-section">
+          <h3 class="shop-shelf-title">KARTU DIJUAL</h3>
+          <div class="shop-items-row" id="shopCardsContainer"></div>
+        </div>
+
+        <div class="shop-shelf-section">
+          <h3 class="shop-shelf-title">RELIC &amp; LAYANAN</h3>
+          <div class="shop-relics-row" id="shopRelicsContainer"></div>
+          <div class="shop-service-box">
+            <button class="shop-purge-btn" id="shopPurgeBtn">Bakar 1 Kartu (75 Gold)</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="shop-footer-bar">
+        <button class="spire-btn primary-btn" onclick="spireApp.openMapScreen()">Tinggalkan Toko Γ₧ö</button>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCREEN 6: MYSTERY EVENT (Γ¥ô)
+         ==================================================================== -->
+    <section class="screen-view event-screen" id="EVENT_SCREEN" style="display: none;">
+      <div class="event-card-container">
+        <div class="event-image-area" id="eventIcon">Γ¥ô</div>
+        <div class="event-content-area">
+          <h2 class="event-title" id="eventTitle">Peristiwa Misteri</h2>
+          <p class="event-story-text" id="eventStory">Sebuah lorong hening terbentang di depanmu...</p>
+          <div class="event-choices-list" id="eventOptionsList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCREEN 7: CHEST ROOM (PETI HARTA)
+         ==================================================================== -->
+    <section class="screen-view chest-screen" id="CHEST_SCREEN" style="display: none;">
+      <div class="chest-card-wrapper">
+        <h2 class="chest-heading">PETI HARTA KARUN PURBA</h2>
+        <div class="chest-content-area" id="chestRewardArea"></div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCREEN 8: REWARDS SCREEN (HADIAH SETELAH MENANG TEMPUR)
+         ==================================================================== -->
+    <section class="screen-view rewards-screen" id="REWARDS_SCREEN" style="display: none;">
+      <div class="rewards-card-wrapper">
+        <h2 class="rewards-heading">VICTORY!</h2>
+        <p class="rewards-sub">Pilih rampasan perang Anda dari medan laga:</p>
+
+        <div class="rewards-items-list" id="rewardItemsList"></div>
+
+        <button class="spire-btn" onclick="spireApp.openMapScreen()">Lewati Sisa &amp; Lanjut ke Peta</button>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCREEN 9: GAME OVER SCREEN (DEFEAT / VICTORY STATS)
+         ==================================================================== -->
+    <section class="screen-view game-over-screen" id="GAME_OVER_SCREEN" style="display: none;">
+      <div class="game-over-box">
+        <h1 class="game-over-title" id="gameOverTitle">DEFEAT...</h1>
+        <p class="game-over-quote">Jiwa Anda kini menjadi bagian dari kegelapan Shadowspire.</p>
+
+        <div class="game-over-stats-grid" id="gameOverStats"></div>
+
+        <div class="game-over-actions">
+          <button class="spire-btn primary-btn" onclick="spireApp.switchScreen('MAIN_MENU_SCREEN')">Kembali ke Menu Utama</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         CINEMATIC BOSS INTRO OVERLAY (ANIME DRAMATIC CUTSCENE)
+         ==================================================================== -->
+    <div class="boss-cinematic-overlay" id="bossCinematicOverlay">
+      <div class="cinema-letterbox-top"></div>
+      <div class="cinema-letterbox-bottom"></div>
+      <div class="boss-lightning-flash" id="bossLightningFlash"></div>
+      <div class="boss-watermark-kanji" id="bossWatermarkKanji">Φ¡ªσæè</div>
+
+      <div class="boss-cinematic-card">
+        <div class="boss-alert-badge" id="bossAlertBadge">ΓÜá∩╕Å PERTEMPURAN PUNCAK ACT 1 // BOSS ENCOUNTER ΓÜá∩╕Å</div>
+        
+        <div class="boss-cinematic-portrait-wrap">
+          <div class="boss-portrait-aura"></div>
+          <div id="bossCinematicAvatar"></div>
+        </div>
+
+        <h1 class="boss-cinematic-title" id="bossCinematicTitle">AETHER-RUNE SENTINEL</h1>
+        <div class="boss-cinematic-subtitle" id="bossCinematicSubtitle">PENJAGA MEKANIKAL PURBA ΓÇó CALAMITY CLASS</div>
+
+        <div class="boss-dialogue-box">
+          <p class="boss-dialogue-text" id="bossDialogueText">"PENYUSUP TERDETEKSI... MEMULAI PROTOKOL PEMBASMIAN LEVEL ALPHA!"</p>
+          <div class="boss-lore-quote" id="bossLoreQuote">Detik jam abadi berdentang di sekeliling golem purba ini.</div>
+        </div>
+
+        <div class="boss-engage-actions">
+          <button class="boss-cinematic-engage-btn" id="btnEngageBoss" onclick="spireApp.dismissBossCinematic()">
+            ΓÜö∩╕Å MENANTANG SANG PENGUASA (ENGAGE BOSS)
+          </button>
+        </div>
+        <div class="boss-cinematic-skip-hint">Klik tombol atau tekan SPACE / ENTER untuk bertarung</div>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         MODAL 1: SETTINGS MODAL (PENGATURAN)
+         ==================================================================== -->
+    <div class="spire-modal-backdrop" id="settingsModal" style="display: none;">
+      <div class="spire-modal-content settings-dialog">
+        <div class="modal-header">
+          <h2 class="modal-title">PENGATURAN GAME</h2>
+          <button class="modal-close-btn" onclick="spireApp.closeAllModals()">Γ£ò</button>
+        </div>
+
+        <div class="settings-rows-list">
+          <div class="setting-row">
+            <label for="sliderMasterVolume">Volume Suara (SFX)</label>
+            <input type="range" id="sliderMasterVolume" min="0" max="100" value="70" onchange="spireApp.updateSfxVolume(this.value)">
+          </div>
+
+          <div class="setting-row">
+            <label for="sliderBgmVolume">Volume Musik Ambient (BGM)</label>
+            <input type="range" id="sliderBgmVolume" min="0" max="100" value="40" onchange="spireApp.updateBgmVolume(this.value)">
+          </div>
+
+          <div class="setting-row">
+            <label>Efek Goncangan Layar (Screen Shake)</label>
+            <button class="toggle-setting-btn active" id="toggleShakeBtn" onclick="spireApp.toggleScreenShake()">Aktif</button>
+          </div>
+
+          <div class="setting-row">
+            <label>Kecepatan Animasi Tempur</label>
+            <button class="toggle-setting-btn" id="toggleSpeedBtn" onclick="spireApp.toggleBattleSpeed()">Normal (1x)</button>
+          </div>
+
+          <div class="setting-row">
+            <label>Reset Data Save</label>
+            <button class="danger-btn" onclick="spireApp.resetSaveData()">Hapus Progres Tersimpan</button>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="spire-btn primary-btn" onclick="spireApp.closeAllModals()">Simpan &amp; Tutup</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         MODAL 2: EXIT CONFIRMATION MODAL
+         ==================================================================== -->
+    <div class="spire-modal-backdrop" id="exitModal" style="display: none;">
+      <div class="spire-modal-content exit-dialog">
+        <h2 class="modal-title">MENINGGALKAN SHADOWSPIRE?</h2>
+        <p style="color: #adb5bd; margin: 14px 0;">Progres petualangan Anda akan tersimpan secara otomatis jika sedang berada di dalam dungeon.</p>
+        <div class="modal-footer" style="gap: 14px;">
+          <button class="spire-btn" onclick="spireApp.closeAllModals()">Batal</button>
+          <button class="spire-btn primary-btn" onclick="spireApp.confirmExitGame()">Ya, Keluar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         MODAL 3: PILIH 1 DARI 3 KARTU (CARD REWARD)
+         ==================================================================== -->
+    <div class="spire-modal-backdrop" id="cardChoiceModal" style="display: none;">
+      <div class="spire-modal-content card-choice-dialog">
+        <h2 class="modal-title">PILIH 1 KARTU UNTUK DITAMBAHKAN</h2>
+        <div class="card-choice-row" id="cardChoiceContainer"></div>
+        <button class="spire-btn skip-btn" onclick="spireApp.skipCardChoice()">Lewati (Skip Kartu)</button>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         MODAL 4: DECK VIEWER & SMITH/PURGE
+         ==================================================================== -->
+    <div class="spire-modal-backdrop" id="deckViewerModal" style="display: none;">
+      <div class="spire-modal-content deck-viewer-dialog">
+        <div class="modal-header">
+          <h2 class="modal-title" id="deckViewerTitle">Seluruh Kartu di Deck</h2>
+          <button class="modal-close-btn" onclick="spireApp.closeAllModals()">Γ£ò</button>
+        </div>
+        <div class="deck-viewer-grid" id="deckViewerGrid"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Script Modules -->
+  <script src="js/audio.js?v=5"></script>
+  <script src="js/vfx.js?v=5"></script>
+  <script src="js/cards.js?v=5"></script>
+  <script src="js/relics.js?v=5"></script>
+  <script src="js/potions.js?v=5"></script>
+  <script src="js/enemies.js?v=5"></script>
+  <script src="js/events.js?v=5"></script>
+  <script src="js/map.js?v=5"></script>
+  <script src="js/gameState.js?v=5"></script>
+  <script src="js/combat.js?v=5"></script>
+  <script src="js/app.js?v=5"></script>
+
+
+</body></html>

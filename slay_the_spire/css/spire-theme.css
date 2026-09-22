@@ -1,0 +1,629 @@
+/* ==========================================================================
+   SLAY THE SPIRE - CORE THEME, TYPOGRAPHY & TOP HUD
+   ========================================================================== */
+
+:root {
+  --bg-dark: #0d0f12;
+  --bg-dungeon: #14171d;
+  --bg-parchment: #1e1b18;
+  --border-gold: #c5a059;
+  --border-gold-glow: rgba(197, 160, 89, 0.4);
+  --border-iron: #3d434d;
+  --color-ironclad-red: #9e2a2b;
+  --color-ironclad-bright: #e03131;
+  --color-skill-blue: #1864ab;
+  --color-power-purple: #6741d9;
+  --text-main: #f1f3f5;
+  --text-muted: #adb5bd;
+  --text-gold: #ffd43b;
+  --text-green: #51cf66;
+  --font-spire: 'Cinzel', 'Outfit', serif;
+  --font-body: 'Outfit', sans-serif;
+  --font-mono: 'Space Grotesk', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+}
+
+/* Background Atmosphere */
+#spireAppContainer {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Canvas VFX Overlay */
+#vfxCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* Screens Management: Strictly controlled visibility */
+.screen-view {
+  display: none !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  flex-direction: column;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.screen-view.active {
+  display: flex !important;
+  z-index: 20;
+}
+
+/* ==========================================================================
+   CINEMATIC SCENE TRANSITION CURTAIN
+   ========================================================================== */
+.scene-transition-curtain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at center, rgba(32, 9, 12, 0.98) 0%, rgba(6, 7, 10, 1) 100%);
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scene-transition-curtain.curtain-closed {
+  opacity: 1;
+  pointer-events: none !important;
+}
+
+/* ==========================================================================
+   TOP HUD BAR
+   ========================================================================== */
+.top-hud-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 58px;
+  background: linear-gradient(180deg, rgba(14, 16, 20, 0.96) 0%, rgba(14, 16, 20, 0.85) 85%, transparent 100%);
+  border-bottom: 2px solid #2b303c;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 90;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+}
+
+.hud-left, .hud-center, .hud-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Player HP pill */
+.hud-hp-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #1a0808;
+  border: 1px solid #731e1e;
+  border-radius: 6px;
+  padding: 4px 10px;
+}
+
+.hud-hp-bar-track {
+  width: 120px;
+  height: 14px;
+  background: #330e0e;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #4a1515;
+}
+
+.hud-hp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #c92a2a, #ff6b6b);
+  transition: width 0.3s ease;
+}
+
+.hud-hp-text {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: #fff;
+}
+
+.hud-block-badge {
+  background: #0d2744;
+  color: #74c0fc;
+  border: 1px solid #1c7ed6;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-weight: 700;
+  font-size: 13px;
+  display: none;
+}
+
+/* Gold */
+.hud-gold-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #231d0c;
+  border: 1px solid #735914;
+  border-radius: 6px;
+  padding: 4px 10px;
+  color: var(--text-gold);
+  font-weight: 700;
+  font-size: 14px;
+  font-family: var(--font-mono);
+}
+
+/* Floor */
+.hud-floor-badge {
+  font-family: var(--font-spire);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #dee2e6;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Relics Bar */
+.hud-relics-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.relic-badge {
+  width: 38px;
+  height: 38px;
+  background: radial-gradient(circle, #252a34 0%, #16181f 100%);
+  border: 1px solid var(--border-gold);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.relic-badge:hover {
+  transform: translateY(-2px) scale(1.08);
+  box-shadow: 0 0 10px var(--border-gold-glow);
+}
+
+.relic-counter {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: #e03131;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  border-radius: 10px;
+  padding: 1px 4px;
+  border: 1px solid #111;
+}
+
+/* Potions Belt */
+.hud-potions-list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.potion-slot {
+  width: 38px;
+  height: 38px;
+  background: #14171d;
+  border: 1px solid #343a40;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.potion-slot.has-potion {
+  border-color: #ffd43b;
+  background: radial-gradient(circle, #2a251a 0%, #16181f 100%);
+  box-shadow: 0 0 8px rgba(255, 212, 59, 0.25);
+}
+
+.potion-slot.empty {
+  opacity: 0.4;
+}
+
+/* ==========================================================================
+   PREMIUM DARK FANTASY CARD TOOLTIP (RELICS, POTIONS, STATUSES, INTENTS)
+   ========================================================================== */
+.tooltip-box {
+  display: none;
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, rgba(28, 34, 46, 0.98) 0%, rgba(16, 20, 28, 0.98) 100%) !important;
+  border: 2px solid #ffd43b !important;
+  border-radius: 10px !important;
+  padding: 12px 16px !important;
+  color: #f8f9fa !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+  white-space: normal !important;
+  min-width: 200px !important;
+  max-width: 280px !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.95), 0 0 16px rgba(255, 212, 59, 0.3) !important;
+  z-index: 1000 !important;
+  backdrop-filter: blur(12px) !important;
+  pointer-events: auto !important;
+  opacity: 1 !important;
+  animation: tooltipCardPop 0.18s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+@keyframes tooltipCardPop {
+  0% { opacity: 0; transform: translateX(-50%) translateY(-6px) scale(0.96); }
+  100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+.relic-badge:hover .tooltip-box,
+.potion-slot.has-potion:hover .tooltip-box,
+.enemy-intent-box:hover .tooltip-box,
+.combat-status-badge:hover .tooltip-box {
+  display: block !important;
+  pointer-events: auto !important;
+}
+
+.tooltip-box strong {
+  display: block;
+  font-family: var(--font-spire);
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  color: #ffd43b !important;
+  text-shadow: 0 0 8px rgba(255, 212, 59, 0.6);
+  margin-bottom: 6px;
+  border-bottom: 1.5px solid rgba(255, 212, 59, 0.35);
+  padding-bottom: 5px;
+  letter-spacing: 0.5px;
+}
+
+.tooltip-box p {
+  margin: 0 0 10px 0;
+  color: #dee2e6;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.potion-use-btn {
+  background: linear-gradient(180deg, #2b8a3e 0%, #237032 100%) !important;
+  color: #fff !important;
+  border: 1.5px solid #51cf66 !important;
+  border-radius: 6px !important;
+  padding: 6px 12px !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 6px;
+  box-shadow: 0 2px 10px rgba(81, 207, 102, 0.45) !important;
+  transition: all 0.2s ease;
+}
+
+.potion-use-btn:hover {
+  background: linear-gradient(180deg, #2f9e44 0%, #2b8a3e 100%) !important;
+  box-shadow: 0 0 16px rgba(81, 207, 102, 0.75) !important;
+  transform: translateY(-1px);
+}
+
+.potion-discard-btn {
+  background: rgba(45, 49, 58, 0.85) !important;
+  color: #adb5bd !important;
+  border: 1px solid #495057 !important;
+  border-radius: 6px !important;
+  padding: 5px 12px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.potion-discard-btn:hover {
+  background: #c92a2a !important;
+  border-color: #ff6b6b !important;
+  color: #fff !important;
+  box-shadow: 0 0 12px rgba(255, 107, 107, 0.6) !important;
+}
+
+.potion-use-btn {
+  background: #2b8a3e;
+  color: #fff;
+}
+.potion-use-btn:hover { background: #37b24d; }
+
+.potion-discard-btn {
+  background: #495057;
+  color: #ced4da;
+}
+.potion-discard-btn:hover { background: #c92a2a; color: #fff; }
+
+/* Deck & Map buttons in HUD */
+.hud-btn {
+  background: #1f232b;
+  border: 1px solid #495057;
+  color: #e9ecef;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.hud-btn:hover {
+  background: #2c323d;
+  border-color: var(--border-gold);
+  color: #fff;
+}
+
+.hud-deck-badge {
+  background: var(--color-ironclad-red);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+
+/* General Buttons */
+.spire-btn {
+  background: linear-gradient(180deg, #3d434f 0%, #20242b 100%);
+  border: 2px solid var(--border-gold);
+  color: var(--text-gold);
+  font-family: var(--font-spire);
+  font-size: 16px;
+  font-weight: 700;
+  padding: 10px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+  transition: all 0.2s ease;
+}
+
+.spire-btn:hover {
+  background: linear-gradient(180deg, #505868 0%, #2b313a 100%);
+  border-color: #ffe066;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(197, 160, 89, 0.4);
+}
+
+.spire-btn.primary-btn {
+  background: linear-gradient(180deg, #9e2a2b 0%, #541415 100%);
+  border-color: #ff6b6b;
+  color: #fff;
+}
+
+.spire-btn.primary-btn:hover {
+  background: linear-gradient(180deg, #c92a2a 0%, #6d1b1c 100%);
+  box-shadow: 0 6px 20px rgba(224, 49, 49, 0.5);
+}
+
+
+/* ==========================================================================
+   ADVANCED GOTHIC UI TOKENS, BUTTONS & TOOLTIPS
+   ========================================================================== */
+
+/* Custom Dark Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 12, 16, 0.9);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #343a40;
+  border-radius: 4px;
+  border: 1px solid rgba(197, 160, 89, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ffd43b;
+}
+
+/* Button Variants */
+.spire-btn-gold {
+  background: linear-gradient(180deg, #ffd43b 0%, #d48806 100%);
+  color: #111;
+  font-family: var(--font-spire);
+  font-weight: 800;
+  border: 1px solid #ffe066;
+  border-radius: 6px;
+  padding: 10px 22px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(255, 212, 59, 0.4);
+  transition: all 0.15s ease;
+}
+
+.spire-btn-gold:hover {
+  background: #fff;
+  color: #000;
+  box-shadow: 0 6px 20px rgba(255, 212, 59, 0.7);
+  transform: translateY(-2px);
+}
+
+.spire-btn-danger {
+  background: linear-gradient(180deg, #e03131 0%, #9c1414 100%);
+  color: #fff;
+  font-family: var(--font-spire);
+  font-weight: 700;
+  border: 1px solid #ff8787;
+  border-radius: 6px;
+  padding: 10px 22px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(224, 49, 49, 0.4);
+  transition: all 0.15s ease;
+}
+
+.spire-btn-danger:hover {
+  background: #ff4d4d;
+  box-shadow: 0 6px 20px rgba(224, 49, 49, 0.7);
+  transform: translateY(-2px);
+}
+
+/* Gothic Vignette Overlay */
+.gothic-vignette-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.85);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ==========================================================================
+   PROGRESSIVE WEB APP (PWA) & MOBILE OPTIMIZATIONS
+   ========================================================================== */
+
+/* PWA Install Button in Main Menu */
+.menu-btn.pwa-install-btn {
+  background: linear-gradient(135deg, rgba(142, 68, 173, 0.4) 0%, rgba(231, 76, 60, 0.3) 100%);
+  border: 2px solid #a855f7;
+  color: #f3e8ff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 18px rgba(168, 85, 247, 0.35);
+  animation: pwaPulseGlow 3s infinite ease-in-out;
+}
+
+.menu-btn.pwa-install-btn:hover {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.6) 0%, rgba(239, 68, 68, 0.5) 100%);
+  border-color: #d8b4fe;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(168, 85, 247, 0.6);
+}
+
+@keyframes pwaPulseGlow {
+  0%, 100% {
+    box-shadow: 0 4px 16px rgba(168, 85, 247, 0.3);
+    border-color: #a855f7;
+  }
+  50% {
+    box-shadow: 0 6px 24px rgba(216, 180, 254, 0.55), 0 0 12px rgba(168, 85, 247, 0.4);
+    border-color: #d8b4fe;
+  }
+}
+
+/* PWA Button in Settings Dialog */
+.pwa-setting-btn {
+  background: linear-gradient(180deg, #7928ca 0%, #4a154b 100%);
+  border: 1px solid #c084fc;
+  color: #fff;
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pwa-setting-btn:hover {
+  background: linear-gradient(180deg, #9333ea 0%, #581c87 100%);
+  border-color: #e9d5ff;
+  box-shadow: 0 4px 14px rgba(168, 85, 247, 0.5);
+}
+
+/* PWA Toast Notification */
+.pwa-toast-notification {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: rgba(18, 14, 28, 0.95);
+  border: 1px solid rgba(168, 85, 247, 0.6);
+  color: #f3e8ff;
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(168, 85, 247, 0.3);
+  z-index: 999999;
+  pointer-events: none;
+  opacity: 0;
+  transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.35s ease;
+  backdrop-filter: blur(8px);
+}
+
+.pwa-toast-notification.active {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* Mobile & Touch Optimizations */
+html, body {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+@supports (padding-top: env(safe-area-inset-top)) {
+  .top-hud-bar {
+    padding-top: max(8px, env(safe-area-inset-top));
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+}
+
+/* Standalone Mode specific tweaks */
+.app-standalone-mode #INTRO_SPLASH_SCREEN {
+  cursor: pointer;
+}
+
+
+

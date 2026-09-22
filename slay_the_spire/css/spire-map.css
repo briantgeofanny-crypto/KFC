@@ -1,0 +1,233 @@
+/* ==========================================================================
+   SLAY THE SPIRE - MAP SCREEN & PROCEDURAL ROUTE VIEW
+   ========================================================================== */
+
+.map-screen {
+  background: #0d0f12;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+.map-header-banner {
+  padding: 70px 24px 12px 24px;
+  background: linear-gradient(180deg, #16181f 0%, transparent 100%);
+  text-align: center;
+  z-index: 10;
+}
+
+.map-act-title {
+  font-family: var(--font-spire);
+  font-size: 26px;
+  color: var(--text-gold);
+  letter-spacing: 2px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+}
+
+.map-act-subtitle {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* Scrollable Map Container */
+.map-scroll-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 40px 0 100px 0;
+  scroll-behavior: smooth;
+}
+
+/* SVG Line Layer */
+.map-lines-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: visible;
+}
+
+.map-line {
+  stroke: rgba(255, 255, 255, 0.5) !important;
+  stroke-width: 2.5px !important;
+  stroke-dasharray: 6 5 !important;
+  fill: none !important;
+  opacity: 0.85 !important;
+  transition: stroke 0.3s ease;
+}
+
+/* Luminous Glowing Available Path Lines */
+.map-line.available-path {
+  stroke: #00f0ff !important;
+  stroke-width: 4px !important;
+  stroke-dasharray: 8 5 !important;
+  fill: none !important;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.95)) !important;
+  animation: mapPathFlow 1s linear infinite !important;
+}
+
+@keyframes mapPathFlow {
+  0% { stroke-dashoffset: 26; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.map-line.visited {
+  stroke: #ffd43b !important;
+  stroke-width: 5px !important;
+  stroke-dasharray: none !important;
+  fill: none !important;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 12px rgba(255, 212, 59, 0.95)) !important;
+}
+
+/* Floor Grid Nodes */
+.map-nodes-container {
+  position: relative;
+  width: 580px;
+  min-height: max-content;
+  align-self: flex-start;
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+.map-rows-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 38px;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.map-floor-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: relative;
+  min-height: 52px;
+}
+
+.floor-number-label {
+  position: absolute;
+  left: -50px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: #495057;
+}
+
+/* Individual Node Styling */
+.map-node {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #252a34 0%, #16181f 100%);
+  border: 2px solid #495057;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: not-allowed;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.map-node .node-icon {
+  font-size: 20px;
+}
+
+.map-node .node-title {
+  display: none;
+}
+
+/* Node States */
+.map-node.available {
+  cursor: pointer;
+  border-color: #ffd43b;
+  box-shadow: 0 0 16px rgba(255, 212, 59, 0.6);
+  animation: nodeGlowPulse 1.4s infinite alternate;
+}
+
+@keyframes nodeGlowPulse {
+  0% { transform: scale(1.0); box-shadow: 0 0 10px rgba(255, 212, 59, 0.5); }
+  100% { transform: scale(1.15); box-shadow: 0 0 24px rgba(255, 212, 59, 0.9); }
+}
+
+.map-node.available:hover {
+  transform: scale(1.22) !important;
+  background: radial-gradient(circle, #443c22 0%, #201b10 100%);
+}
+
+.map-node.visited {
+  border-color: #868e96;
+  opacity: 0.5;
+}
+
+.map-node.current {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 20px rgba(255, 107, 107, 0.8);
+  transform: scale(1.18);
+  opacity: 1;
+}
+
+.map-node.current::after {
+  content: '▼';
+  position: absolute;
+  top: -18px;
+  font-size: 14px;
+  color: #ff6b6b;
+  animation: arrowBounce 0.6s infinite alternate;
+}
+
+@keyframes arrowBounce {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-4px); }
+}
+
+/* Special Node Types */
+.map-node.node-boss {
+  width: 72px;
+  height: 72px;
+  border-color: #e03131;
+}
+.map-node.node-boss .node-icon {
+  font-size: 32px;
+}
+
+.map-node.node-elite {
+  border-color: #f03e3e;
+}
+
+.map-node.node-rest {
+  border-color: #ffa94d;
+}
+
+.map-node.node-shop {
+  border-color: #ffd43b;
+}
+
+/* Map Legend Bar */
+.map-legend-bar {
+  background: rgba(14, 16, 20, 0.95);
+  border-top: 1px solid #2b303c;
+  padding: 10px 24px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  z-index: 10;
+  font-size: 12px;
+  color: #adb5bd;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}

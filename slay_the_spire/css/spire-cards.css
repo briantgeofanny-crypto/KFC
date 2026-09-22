@@ -1,0 +1,404 @@
+/* ==========================================================================
+   SHADOWSPIRE: CHRONICLES OF ASCENSION - ANIME MASTER CARD DESIGN SYSTEM
+   ========================================================================== */
+
+/* Area Tangan Kartu (Fan Hand Arc) */
+.combat-hand-container {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 285px;
+  width: 960px;
+  z-index: 50;
+  pointer-events: none;
+}
+
+/* Base Card Element */
+.spire-card {
+  pointer-events: auto;
+  width: 168px;
+  height: 258px;
+  background: #11141c;
+  border-radius: 12px;
+  position: relative;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 0, 0, 0.6);
+  cursor: grab;
+  transition: 
+    transform 0.22s cubic-bezier(0.18, 0.89, 0.32, 1.28), 
+    box-shadow 0.2s ease, 
+    border-color 0.2s ease,
+    filter 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 7px;
+  border: 2.5px solid #3d4454;
+  flex-shrink: 0;
+  margin-left: -24px;
+  transform-origin: bottom center;
+  user-select: none;
+  overflow: visible; /* Biarkan energi crystal & badge memancar */
+}
+
+.spire-card:first-child {
+  margin-left: 0;
+}
+
+/* Card Hover Arc Lift & Holographic Aura */
+.spire-card:hover {
+  transform: translateY(-56px) scale(1.18) !important;
+  z-index: 100 !important;
+  box-shadow: 
+    0 24px 50px rgba(0, 0, 0, 0.98), 
+    0 0 30px rgba(255, 212, 59, 0.65),
+    0 0 10px rgba(255, 255, 255, 0.4);
+  border-color: #ffd43b !important;
+  cursor: grab;
+}
+
+.spire-card.card-selected {
+  transform: translateY(-75px) scale(1.22) !important;
+  z-index: 200 !important;
+  border-color: #ff6b6b !important;
+  box-shadow: 0 26px 65px rgba(0, 0, 0, 0.98), 0 0 35px rgba(224, 49, 49, 0.95) !important;
+  cursor: grabbing;
+}
+
+.spire-card.unplayable {
+  filter: brightness(0.55) grayscale(0.65);
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   CARD ARCHETYPE THEMES & ANIME AURA GRADIENTS
+   ========================================================================== */
+
+/* 1. ATTACK (Crimson Sukuna / Tanjiro Flame) */
+.spire-card.card-attack {
+  border-color: #b02a2a;
+  background: radial-gradient(circle at top, #361014 0%, #150608 100%);
+  box-shadow: 0 6px 22px rgba(224, 49, 49, 0.35), 0 10px 30px rgba(0, 0, 0, 0.85);
+}
+
+.spire-card.card-attack .card-title-banner {
+  background: linear-gradient(90deg, #601212 0%, #b02525 50%, #601212 100%);
+  border: 1px solid #ff8787;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+}
+
+.spire-card.card-attack .card-energy-crystal {
+  background: radial-gradient(circle, #ff2a2a 0%, #821010 100%);
+  border-color: #ffd43b;
+  box-shadow: 0 0 12px rgba(255, 42, 42, 0.85);
+}
+
+/* 2. SKILL (Dead Calm Azure / Cobalt Water) */
+.spire-card.card-skill {
+  border-color: #1971c2;
+  background: radial-gradient(circle at top, #0f243c 0%, #06111e 100%);
+  box-shadow: 0 6px 22px rgba(25, 113, 194, 0.35), 0 10px 30px rgba(0, 0, 0, 0.85);
+}
+
+.spire-card.card-skill .card-title-banner {
+  background: linear-gradient(90deg, #0e355c 0%, #1c7ed6 50%, #0e355c 100%);
+  border: 1px solid #74c0fc;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+}
+
+.spire-card.card-skill .card-energy-crystal {
+  background: radial-gradient(circle, #228be6 0%, #0c4a7e 100%);
+  border-color: #74c0fc;
+  box-shadow: 0 0 12px rgba(34, 139, 230, 0.85);
+}
+
+/* 3. POWER (Domain Amber / Super Saiyan Gold) */
+.spire-card.card-power {
+  border-color: #f59f00;
+  background: radial-gradient(circle at top, #362408 0%, #150e02 100%);
+  box-shadow: 0 6px 22px rgba(245, 159, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.85);
+}
+
+.spire-card.card-power .card-title-banner {
+  background: linear-gradient(90deg, #664104 0%, #f59f00 50%, #664104 100%);
+  border: 1px solid #ffd43b;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+}
+
+.spire-card.card-power .card-energy-crystal {
+  background: radial-gradient(circle, #fab005 0%, #8c5800 100%);
+  border-color: #fff;
+  box-shadow: 0 0 14px rgba(250, 176, 5, 0.9);
+}
+
+/* 4. STATUS (Toxic Moss Green) */
+.spire-card.card-status {
+  border-color: #51cf66;
+  background: radial-gradient(circle at top, #112816 0%, #061209 100%);
+  box-shadow: 0 6px 20px rgba(81, 207, 102, 0.35), 0 10px 30px rgba(0, 0, 0, 0.85);
+}
+
+.spire-card.card-status .card-title-banner {
+  background: linear-gradient(90deg, #15451e 0%, #2f9e44 50%, #15451e 100%);
+  border: 1px solid #8ce99a;
+  color: #fff;
+}
+
+/* 5. CURSE (Black Obsidian Void) */
+.spire-card.card-curse {
+  border-color: #845ef7;
+  background: radial-gradient(circle at top, #1e1330 0%, #0a0614 100%);
+  box-shadow: 0 6px 20px rgba(132, 94, 247, 0.4), 0 10px 30px rgba(0, 0, 0, 0.95);
+}
+
+.spire-card.card-curse .card-title-banner {
+  background: linear-gradient(90deg, #2b1747 0%, #5f3dc4 50%, #2b1747 100%);
+  border: 1px solid #b197fc;
+  color: #e5dbff;
+}
+
+/* ==========================================================================
+   CARD INNER COMPONENTS & ANIME VISUALS
+   ========================================================================== */
+
+/* Energy Crystal Orb */
+.card-energy-crystal {
+  position: absolute;
+  top: -9px;
+  left: -9px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #ffd43b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+  z-index: 15;
+  text-shadow: 0 2px 4px #000;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+}
+
+/* Card Header Wrap */
+.card-header-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2px;
+  margin-bottom: 3px;
+}
+
+/* Title Banner */
+.card-title-banner {
+  width: 100%;
+  padding: 3px 5px;
+  border-radius: 4px;
+  font-family: var(--font-spire);
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+/* Anime Origin Badge */
+.card-anime-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  color: #ffd43b;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 212, 59, 0.4);
+  border-radius: 3px;
+  padding: 1px 4px;
+  margin-top: 2px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  max-width: 95%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Card Art Frame */
+.card-art-frame {
+  width: 100%;
+  height: 76px;
+  background: #080a10;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  margin: 3px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.9);
+}
+
+.anime-art-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  transition: transform 0.25s ease;
+}
+
+.spire-card:hover .anime-art-svg {
+  transform: scale(1.06);
+}
+
+/* Type & Rarity Tag */
+.card-type-tag {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  font-weight: 700;
+  color: #adb5bd;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 3px;
+}
+
+/* Card Description Box */
+.card-description {
+  flex: 1;
+  width: 100%;
+  background: rgba(10, 13, 18, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 6px;
+  padding: 5px 6px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  line-height: 1.35;
+  color: #dee2e6;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.card-description strong {
+  color: #ffd43b;
+  font-weight: 800;
+  margin: 0 2px;
+}
+
+/* Dynamic Boosted / Reduced Stat Colors */
+.card-description strong.stat-boosted {
+  color: #51cf66 !important;
+  text-shadow: 0 0 6px rgba(81, 207, 102, 0.8);
+}
+
+.card-description strong.stat-reduced {
+  color: #ff6b6b !important;
+  text-shadow: 0 0 6px rgba(255, 107, 107, 0.8);
+}
+
+/* Card Story Quote (Anime Flavor Line on Every Card) */
+.card-story-quote {
+  width: 100%;
+  font-family: 'Outfit', sans-serif;
+  font-size: 9px;
+  font-style: italic;
+  color: #a5b4fc;
+  background: rgba(0, 0, 0, 0.55);
+  border-left: 2px solid #818cf8;
+  border-radius: 0 3px 3px 0;
+  padding: 2px 4px;
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  line-height: 1.2;
+}
+
+.card-story-quote .quote-mark {
+  color: #ffd43b;
+  font-weight: 800;
+  margin-right: 1px;
+}
+
+/* Rarity Gem / Holographic Dot */
+.card-rarity-gem {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-top: 3px;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.rarity-basic .card-rarity-gem { background: #ced4da; color: #ced4da; }
+.rarity-common .card-rarity-gem { background: #4dabf7; color: #4dabf7; }
+.rarity-uncommon .card-rarity-gem { background: #20c997; color: #20c997; }
+.rarity-rare .card-rarity-gem { background: #ffd43b; color: #ffd43b; box-shadow: 0 0 10px #ffd43b; }
+.rarity-curse .card-rarity-gem { background: #be4bdb; color: #be4bdb; }
+
+/* Holographic Borders by Rarity */
+.rarity-uncommon {
+  border-color: #20c997 !important;
+}
+
+.rarity-rare {
+  border-color: #ffd43b !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 18px rgba(255, 212, 59, 0.4) !important;
+}
+
+/* ==========================================================================
+   KEYWORD TOOLTIP SIDEBAR (ON HOVER)
+   ========================================================================== */
+.card-keywords-sidebar {
+  position: absolute;
+  top: 0;
+  left: calc(100% + 10px);
+  width: 175px;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 150;
+  pointer-events: none;
+}
+
+.spire-card:hover .card-keywords-sidebar {
+  display: flex;
+}
+
+.keyword-tooltip-pill {
+  background: rgba(15, 17, 24, 0.96);
+  border: 1.5px solid #495057;
+  border-radius: 6px;
+  padding: 8px 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+}
+
+.keyword-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-spire);
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.keyword-desc {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  line-height: 1.35;
+  color: #ced4da;
+}

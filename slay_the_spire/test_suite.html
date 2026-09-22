@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Shadowspire Test Suite</title>
+</head>
+<body>
+  <div id="results"></div>
+  <div id="bossCinematicOverlay" style="display:none;">
+    <div id="bossCinematicAvatar"></div>
+    <div id="bossCinematicTitle"></div>
+    <div id="bossCinematicSubtitle"></div>
+    <div id="bossDialogueText"></div>
+    <div id="bossLoreQuote"></div>
+    <div id="bossAlertBadge"></div>
+    <div id="bossWatermarkKanji"></div>
+  </div>
+  <div id="heroShowcaseStage"></div>
+  <!-- Load all game scripts in the same order as index.html -->
+  <script src="js/i18n.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/vfx.js"></script>
+  <script src="js/cards.js"></script>
+  <script src="js/relics.js"></script>
+  <script src="js/potions.js"></script>
+  <script src="js/enemies.js"></script>
+  <script src="js/events.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/gameState.js"></script>
+  <script src="js/combat.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    const logs = [];
+    function assert(cond, msg) {
+      if (!cond) {
+        logs.push("[FAIL] " + msg);
+        console.error("[FAIL] " + msg);
+      } else {
+        logs.push("[PASS] " + msg);
+      }
+    }
+
+    try {
+      // 1. Check audio engine
+      assert(typeof window.spireAudio !== 'undefined', "Audio engine exists");
+
+      // 2. Check cards
+      assert(typeof window.CARD_DATABASE === 'object', "CARD_DATABASE loaded");
+      const cardCount = Object.keys(window.CARD_DATABASE).length;
+      assert(cardCount > 50, `Card database has cards: ${cardCount}`);
+
+      // 3. Check heroes
+      assert(typeof window.CHARACTER_DATABASE === 'object', "CHARACTER_DATABASE loaded");
+      const heroKeys = Object.keys(window.CHARACTER_DATABASE);
+      assert(heroKeys.length === 12, `All 12 heroes present: ${heroKeys.join(', ')}`);
+      assert(heroKeys.includes('shadow_monarch'), "Sung Jin-woo (Shadow Monarch) is present");
+      assert(heroKeys.includes('limitless_sorcerer'), "Satoru Gojo (Limitless Sorcerer) is present");
+
+      // Check Active Skills on all heroes
+      let allHeroesHaveSkill = true;
+      heroKeys.forEach(k => {
+        const h = window.CHARACTER_DATABASE[k];
+        if (!h.activeSkill || typeof h.activeSkill.execute !== 'function') {
+          allHeroesHaveSkill = false;
+        }
+      });
+      assert(allHeroesHaveSkill, "All 12 heroes have a valid Active Skill with execute()");
+
+      // 4. Check relics
+      assert(typeof window.RELIC_DATABASE === 'object', "RELIC_DATABASE loaded");
+      const relicCount = Object.keys(window.RELIC_DATABASE).length;
+      assert(relicCount >= 20, `Relic database has relics: ${relicCount}`);
+      assert(window.RELIC_DATABASE['monarchs_heart'] !== undefined, "monarchs_heart relic loaded");
+      assert(window.RELIC_DATABASE['six_eyes'] !== undefined, "six_eyes relic loaded");
+
+      // 5. Check enemies
+      assert(typeof window.ENEMY_DATABASE === 'object', "ENEMY_DATABASE loaded");
+      const enemyCount = Object.keys(window.ENEMY_DATABASE).length;
+      assert(enemyCount >= 10, `Enemy database has enemies: ${enemyCount}`);
+
+      // 6. Check events
+      assert(typeof window.EVENT_DATABASE === 'object', "EVENT_DATABASE loaded");
+
+      // 7. Check difficulty database
+      assert(typeof window.DIFFICULTY_DATABASE === 'object', "DIFFICULTY_DATABASE loaded");
+
+      // 8. Test GameState init and Hero selection
+      window.gameState.startNewRun('ironclad', 'NORMAL');
+      assert(window.gameState.character === 'ironclad', "Hero select works");
+      assert(window.gameState.player.maxHp === 80, "Ironclad HP is 80");
+      assert(window.gameState.deck.length === 10, `Starter deck has 10 cards: got ${window.gameState.deck.length}`);
+
+      // 9. Test Map generation
+      assert(window.gameState.map !== null, "Map exists");
+      assert(window.gameState.map.floors && window.gameState.map.floors.length === 15, `Map generated ${window.gameState.map.floors.length} floors`);
+
+      // 10. Test Combat Engine
+      const testEnemies = window.createEncounter('NORMAL', 1);
+      window.spireCombat.startCombat('NORMAL', testEnemies);
+      assert(window.spireCombat.isActive === true, "Combat is active");
+      assert(window.spireCombat.enemies.length === 1, "Enemy spawned in combat");
+      assert(window.spireCombat.hand.length === 5, `Player drew 5 cards: got ${window.spireCombat.hand.length}`);
+
+      // 11. Test playing a strike card
+      const strikeCard = window.spireCombat.hand.find(c => c.type === 'ATTACK');
+      if (strikeCard) {
+        const initialEnemyHp = testEnemies[0].currentHp;
+        window.spireCombat.playCard(strikeCard.uid, testEnemies[0]);
+        assert(testEnemies[0].currentHp < initialEnemyHp, `Strike dealt damage: ${initialEnemyHp} -> ${testEnemies[0].currentHp}`);
+      }
+
+      // 12. Test Hero Active Skill Execution
+      assert(typeof window.spireCombat.useActiveSkill === 'function', "useActiveSkill function exists");
+      assert(window.spireCombat.player.activeSkillCooldown === 0, "Active skill initial cooldown is 0");
+      const skillUsed = window.spireCombat.useActiveSkill();
+      assert(skillUsed === true, "Active skill executed successfully");
+      assert(window.spireCombat.player.activeSkillCooldown > 0, `Active skill is now on cooldown: ${window.spireCombat.player.activeSkillCooldown}T`);
+
+      // 13. End turn test (trigger enemy turn & cooldown decrement)
+      window.spireCombat.endTurn();
+      assert(window.spireCombat.isPlayerTurn === false, "Turn handed over to enemies");
+
+      // 14. Test Card Anime System & SVG Rendering
+      const testCard = new window.Card(window.CARD_DATABASE['strike']);
+      assert(testCard.getAnimeTitle().includes('Dismantle'), `Anime title rendered: ${testCard.getAnimeTitle()}`);
+      assert(testCard.getStoryQuote().includes('Sukuna'), `Story quote rendered: ${testCard.getStoryQuote()}`);
+      const renderedHtml = testCard.renderHtml(window.spireCombat);
+      assert(renderedHtml.includes('anime-art-svg'), "Anime SVG art included in renderHtml");
+      assert(renderedHtml.includes('card-story-quote'), "Story quote included in renderHtml");
+      assert(renderedHtml.includes('card-anime-badge'), "Anime origin badge included in renderHtml");
+
+      // 15. Test Audio Synthesizers including playActiveSkillSound
+      assert(typeof window.spireAudio.playBossCinematicHorn === 'function', "playBossCinematicHorn exists");
+      assert(typeof window.spireAudio.playBossThunderBoom === 'function', "playBossThunderBoom exists");
+      assert(typeof window.spireAudio.playBossHeartbeat === 'function', "playBossHeartbeat exists");
+      assert(typeof window.spireAudio.playActiveSkillSound === 'function', "playActiveSkillSound exists");
+      window.spireAudio.playActiveSkillSound();
+
+      // 16. Test Boss Cinematic Intro Flow
+      const boss = new window.MonsterEntity(window.BESTIARY_DATABASE['guardian_sentinel'], 15);
+      assert(boss.name.includes('Sentinel'), `Boss entity created: ${boss.name}`);
+      let cinematicCallbackTriggered = false;
+      window.spireApp.playBossCinematicIntro(boss, () => {
+        cinematicCallbackTriggered = true;
+      });
+      const bossOverlay = document.getElementById('bossCinematicOverlay');
+      assert(bossOverlay && bossOverlay.classList.contains('active'), "Boss cinematic overlay is active");
+      window.spireApp.dismissBossCinematic();
+      assert(!bossOverlay.classList.contains('active'), "Boss cinematic overlay is dismissed");
+      assert(cinematicCallbackTriggered === true, "Boss cinematic onComplete callback was executed");
+
+      // 17. Test New Anime Hero Selection (Sung Jin-woo & Satoru Gojo)
+      window.gameState.startNewRun('shadow_monarch', 'NORMAL');
+      assert(window.gameState.character === 'shadow_monarch', "Sung Jin-woo selected");
+      assert(window.gameState.player.maxHp === 85, "Sung Jin-woo HP is 85");
+      assert(window.gameState.deck.some(c => c.defId === 'monarchs_domain'), "Sung Jin-woo has Monarch's Domain card");
+
+      window.gameState.startNewRun('limitless_sorcerer', 'NORMAL');
+      assert(window.gameState.character === 'limitless_sorcerer', "Satoru Gojo selected");
+      assert(window.gameState.player.maxHp === 75, "Satoru Gojo HP is 75");
+      assert(window.gameState.deck.some(c => c.defId === 'hollow_purple_mini'), "Satoru Gojo has Hollow Purple card");
+
+      // 18. Test All Thematic Starter Decks
+      window.gameState.startNewRun('silent', 'NORMAL');
+      assert(window.gameState.deck.some(c => c.defId === 'poison_shiv'), "Silent has Poison Shiv starter card");
+      window.gameState.startNewRun('defect', 'NORMAL');
+      assert(window.gameState.deck.some(c => c.defId === 'arc_discharge'), "Defect has Arc Discharge starter card");
+      window.gameState.startNewRun('necromancer', 'NORMAL');
+      assert(window.gameState.deck.some(c => c.defId === 'bone_dart'), "Necromancer has Bone Dart starter card");
+      window.gameState.startNewRun('chronomancer', 'NORMAL');
+      assert(window.gameState.deck.some(c => c.defId === 'chrono_shard'), "Chronomancer has Chrono Shard starter card");
+
+      // 19. Test Hero Preview Animation Function
+      assert(typeof window.spireApp.playHeroPreviewAnimation === 'function', "playHeroPreviewAnimation exists");
+      window.spireApp.renderHeroShowcase('ironclad');
+      window.spireApp.playHeroPreviewAnimation('attack');
+      const wrap = document.querySelector('.showcase-hero-svg-wrap');
+      assert(wrap && wrap.classList.contains('anim-attack'), "Hero showcase avatar triggered anim-attack");
+
+      // 20. Test I18n Multi-Language System (Indonesian, English, Mandarin, Japanese)
+      assert(typeof window.i18n === 'object', "i18n engine is initialized");
+      assert(window.i18n.supportedLanguages.length === 4, "4 languages supported: id, en, zh, ja");
+
+      // Test English
+      window.i18n.setLanguage('en');
+      assert(window.i18n.getLanguage() === 'en', "Language set to English");
+      assert(window.t('menu_start') === 'Start Adventure', `English translation: ${window.t('menu_start')}`);
+      assert(window.t('settings_title') === 'GAME SETTINGS', `English settings title: ${window.t('settings_title')}`);
+
+      // Test Mandarin Chinese
+      window.i18n.setLanguage('zh');
+      assert(window.i18n.getLanguage() === 'zh', "Language set to Mandarin");
+      assert(window.t('menu_start') === '开始冒险', `Mandarin translation: ${window.t('menu_start')}`);
+
+      // Test Japanese
+      window.i18n.setLanguage('ja');
+      assert(window.i18n.getLanguage() === 'ja', "Language set to Japanese");
+      assert(window.t('menu_start') === '冒険を始める', `Japanese translation: ${window.t('menu_start')}`);
+
+      // Test Indonesian (Default)
+      window.i18n.setLanguage('id');
+      assert(window.i18n.getLanguage() === 'id', "Language restored to Indonesian");
+      assert(window.t('menu_start') === 'Mulai Petualangan', `Indonesian translation: ${window.t('menu_start')}`);
+
+      logs.push("=== ALL CORE SYSTEMS TESTED SUCCESSFULLY ===");
+    } catch (err) {
+      logs.push("[ERROR] " + err.message + "\n" + err.stack);
+    }
+
+    document.getElementById('results').innerText = logs.join('\n');
+  </script>
+</body>
+</html>

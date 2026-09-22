@@ -1,0 +1,63 @@
+{
+  "name": "ShadowSpire: Chronicles of Ascension",
+  "short_name": "ShadowSpire",
+  "description": "Dark fantasy roguelike deckbuilder card game dengan 10 pahlawan unik, mode Ascension, dan pertarungan taktis.",
+  "id": "/shadowspire/",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "any",
+  "background_color": "#0c0d14",
+  "theme_color": "#1a1228",
+  "lang": "id",
+  "categories": [
+    "games",
+    "entertainment",
+    "roleplaying"
+  ],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Mulai Bermain",
+      "short_name": "Main",
+      "description": "Buka gerbang ShadowSpire dan mulai petualangan",
+      "url": "./index.html",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
