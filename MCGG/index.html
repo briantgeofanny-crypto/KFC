@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magic Chess GoGo — Auto Chess Battle Game</title>
+  <meta name="description" content="Magic Chess GoGo — Play the ultimate auto-chess battle game. Choose your commander, build your hero lineup, and fight to be the last one standing!">
+  <meta name="theme-color" content="#fbbf24">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/lobby.css">
+  <style>
+    /* Extra lobby overrides */
+    .menu-actions .btn { width: 100%; }
+    .screen-nav .btn { min-width: 120px; }
+  </style>
+</head>
+<body>
+  <!-- Notification Container -->
+  <div id="notification-container"></div>
+
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loading-logo">MAGIC CHESS</div>
+    <div class="loading-subtitle">GoGo Edition</div>
+    <div class="loading-bar">
+      <div class="loading-progress" id="loading-progress"></div>
+    </div>
+    <div class="loading-text" id="loading-text">Initializing...</div>
+  </div>
+
+  <!-- Lobby Wrapper -->
+  <div id="lobby">
+    <!-- Background -->
+    <div class="lobby-bg">
+      <div class="lobby-bg-gradient"></div>
+      <div class="lobby-grid"></div>
+      <div class="lobby-orb orb-1"></div>
+      <div class="lobby-orb orb-2"></div>
+      <div class="lobby-orb orb-3"></div>
+    </div>
+
+    <!-- ==================== SCREEN: MAIN MENU ==================== -->
+    <section id="screen-menu" class="screen">
+      <div class="menu-floating-cards"></div>
+
+      <div class="menu-logo-section">
+        <div class="menu-logo-badge">✨ Auto Chess Battle Game ✨</div>
+        <div class="menu-logo">
+          <span class="logo-magic">MAGIC</span>
+          <span class="logo-chess">CHESS</span>
+          <span class="logo-gogo">GoGo</span>
+        </div>
+        <div class="menu-tagline">Choose. Deploy. Conquer.</div>
+      </div>
+
+      <div class="menu-actions">
+        <button class="btn-play" id="btn-play">⚔️ PLAY NOW</button>
+        <button class="btn btn-outline" id="btn-how-to-play">📖 How to Play</button>
+      </div>
+
+      <!-- Version badge -->
+      <div style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);font-family:var(--font-ui);font-size:11px;color:var(--text-muted);letter-spacing:0.1em;">
+        MAGIC CHESS GOGO v1.0 • 57 Heroes • 8 Commanders • 30+ GoGoCards
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN: COMMANDER SELECT ==================== -->
+    <section id="screen-commander" class="screen">
+      <div class="screen-header">
+        <div class="screen-step">Step 1 of 2</div>
+        <h1 class="screen-title">Choose Your <span>Commander</span></h1>
+        <p class="screen-desc">Your Commander fights alongside your heroes and uses unique skills during battle.</p>
+      </div>
+
+      <!-- Commander Grid -->
+      <div class="commander-grid" id="commander-grid">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Commander Preview -->
+      <div class="commander-preview" id="commander-preview">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Navigation -->
+      <div class="screen-nav">
+        <button class="btn btn-outline" id="btn-back-menu">← Back</button>
+        <button class="btn btn-primary btn-lg" id="btn-next-commander">Next: GoGoCards →</button>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN: CARD SELECT ==================== -->
+    <section id="screen-cards" class="screen" style="flex-direction:column;padding:40px 20px;max-width:1100px;margin:0 auto;width:100%;">
+      <div class="screen-header">
+        <div class="screen-step">Step 2 of 2</div>
+        <h1 class="screen-title">Choose Your <span>GoGoCards</span></h1>
+        <p class="screen-desc">Select a starter deck or customize your 4 cards. Use them during preparation phase for powerful effects.</p>
+      </div>
+
+      <!-- Chosen Deck Display -->
+      <div style="text-align:center;margin-bottom:8px;">
+        <div style="font-family:var(--font-ui);font-size:12px;color:var(--text-muted);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:12px;">Your Deck (4 Cards)</div>
+        <div class="chosen-deck" id="chosen-deck"></div>
+      </div>
+
+      <!-- Deck Presets -->
+      <div style="font-family:var(--font-ui);font-size:12px;color:var(--text-muted);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:12px;margin-top:8px;">
+        ✨ Starter Decks
+      </div>
+      <div class="deck-options" id="deck-options"></div>
+
+      <!-- Navigation -->
+      <div class="screen-nav">
+        <button class="btn btn-outline" id="btn-back-commander">← Back</button>
+        <button class="btn btn-primary btn-lg" id="btn-start-match">⚔️ Find Match →</button>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN: MATCHMAKING ==================== -->
+    <section id="screen-matchmaking" class="screen">
+      <div class="matchmaking-animation">
+        <div class="mm-ring mm-ring-1"></div>
+        <div class="mm-ring mm-ring-2"></div>
+        <div class="mm-ring mm-ring-3"></div>
+        <div class="mm-center">🎮</div>
+      </div>
+
+      <h2 class="mm-title">Finding Match</h2>
+      <p class="mm-status" id="mm-status">Searching for opponents...</p>
+
+      <div class="mm-players">
+        <div class="mm-player you">👑</div>
+        <div class="mm-player" id="mm-p2">?</div>
+        <div class="mm-player" id="mm-p3">?</div>
+        <div class="mm-player" id="mm-p4">?</div>
+        <div class="mm-player" id="mm-p5">?</div>
+        <div class="mm-player" id="mm-p6">?</div>
+        <div class="mm-player" id="mm-p7">?</div>
+        <div class="mm-player" id="mm-p8">?</div>
+      </div>
+
+      <button class="btn btn-outline" onclick="window.location.href='index.html'">Cancel</button>
+    </section>
+  </div>
+
+  <!-- ==================== GLOBAL MODAL ==================== -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div id="modal-title" style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--primary);margin-bottom:16px;"></div>
+      <div id="modal-body"></div>
+      <div style="margin-top:24px;text-align:center;">
+        <button class="btn btn-primary" id="modal-close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

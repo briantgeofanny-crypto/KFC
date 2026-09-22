@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magic Chess GoGo — Battle</title>
+  <meta name="description" content="Magic Chess GoGo battle arena. Auto-chess battle with heroes, synergies, and commander skills.">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+  <!-- Notification Container -->
+  <div id="notification-container"></div>
+
+  <!-- Ultimate Flash Effect -->
+  <div id="ult-flash" style="position:fixed;inset:0;background:rgba(251,191,36,0.15);pointer-events:none;z-index:999;opacity:0;transition:opacity 0.1s;"></div>
+
+  <!-- ==================== GAME LAYOUT ==================== -->
+  <div id="game">
+
+    <!-- ==================== HEADER ==================== -->
+    <header class="game-header">
+      <!-- Round info -->
+      <div class="round-info">
+        <div class="round-badge">
+          <div class="round-badge-label">Round</div>
+          <div class="round-badge-number" id="round-number">1</div>
+        </div>
+        <div class="phase-indicator">
+          <div class="phase-name prep" id="phase-name">🛠️ Preparation</div>
+          <div class="phase-desc" id="phase-desc">Buy heroes & arrange formation</div>
+        </div>
+      </div>
+
+      <!-- Timer -->
+      <div class="game-timer">
+        <div class="timer-display" id="timer-display">30</div>
+        <div class="timer-label">seconds</div>
+      </div>
+
+      <!-- Player HP row -->
+      <div class="players-hp-row" id="players-hp-row">
+        <!-- Populated by JS -->
+      </div>
+    </header>
+
+    <!-- ==================== LEFT PANEL ==================== -->
+    <aside class="game-left">
+
+      <!-- Player Info -->
+      <div class="player-panel">
+        <div class="player-avatar">
+          <div class="avatar-emoji">👑</div>
+          <div>
+            <div class="player-name-text" id="player-name-display">GoGo Player</div>
+            <div class="player-rank">🏆 Mythic</div>
+          </div>
+        </div>
+        <div class="hp-section">
+          <div class="hp-label">
+            <span>❤️ HP</span>
+            <span class="hp-value" id="player-hp-value">100 HP</span>
+          </div>
+          <div class="progress">
+            <div class="progress-bar progress-hp" id="player-hp-bar" style="width:100%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Economy -->
+      <div class="economy-panel">
+        <div class="eco-title">💰 Economy</div>
+        <div class="gold-display">
+          <span class="gold-icon">🟡</span>
+          <span class="gold-amount" id="gold-amount">3</span>
+          <div style="margin-left:4px;">
+            <div class="gold-per-round">gold</div>
+          </div>
+        </div>
+        <div class="interest-display">
+          <div class="interest-pip" id="interest-pip-1"></div>
+          <div class="interest-pip" id="interest-pip-2"></div>
+          <div class="interest-pip" id="interest-pip-3"></div>
+          <div class="interest-pip" id="interest-pip-4"></div>
+          <div class="interest-pip" id="interest-pip-5"></div>
+        </div>
+        <div class="interest-label" id="interest-label">+0G interest next round</div>
+        <div class="streak-display" style="margin-top:8px;">
+          <span class="streak-icon" id="streak-icon">➖</span>
+          <span class="streak-text" id="streak-text">No streak</span>
+          <span class="streak-bonus" id="streak-bonus">+0G</span>
+        </div>
+      </div>
+
+      <!-- Level & XP -->
+      <div class="level-panel">
+        <div class="level-header">
+          <span class="level-badge" id="player-level">1</span>
+          <div class="level-cap">Board cap: <span id="board-cap">1</span></div>
+        </div>
+        <div class="xp-display" id="xp-display">0/2 XP</div>
+        <div class="progress" style="margin-top:4px;">
+          <div class="progress-bar progress-xp" id="xp-bar-fill" style="width:0%"></div>
+        </div>
+        <button class="btn-buy-xp" onclick="window.game.buyXP()">
+          📚 Buy XP <span style="margin-left:4px;opacity:0.7;">(4🟡)</span>
+        </button>
+      </div>
+
+      <!-- GoGoCards -->
+      <div class="gogocards-panel">
+        <div class="panel-title">🃏 GoGoCards</div>
+        <div class="gogocard-slots" id="gogocard-slots">
+          <!-- Populated by GoGoCardSystem -->
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ==================== BOARD AREA ==================== -->
+    <main class="game-board-area" id="game-board-area">
+
+      <!-- Enemy area label -->
+      <div class="battle-area-label enemy">⚔️ Enemy Territory</div>
+
+      <!-- Enemy Grid (top) -->
+      <div class="board-container">
+        <div class="board-grid enemy-grid" id="enemy-grid">
+          <!-- 32 cells (4 rows × 8 cols) — populated by JS -->
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="board-divider">
+        <div class="board-divider-line"></div>
+        <div class="board-divider-text">⚔️ Battlefield ⚔️</div>
+        <div class="board-divider-line"></div>
+      </div>
+
+      <!-- Ally Grid (bottom) -->
+      <div class="board-container">
+        <div class="board-grid ally-grid" id="ally-grid">
+          <!-- 32 cells (4 rows × 8 cols) — populated by JS -->
+        </div>
+      </div>
+
+      <!-- Ally area label -->
+      <div class="battle-area-label ally">🛡️ Your Territory</div>
+
+      <!-- Bench -->
+      <div class="bench-container">
+        <div class="bench-label">📦 Bench</div>
+        <div class="bench-row" id="bench-row">
+          <!-- 9 bench slots — populated by JS -->
+        </div>
+      </div>
+
+      <!-- Battle VS Banner (hidden by default) -->
+      <div id="vs-banner" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:300;text-align:center;pointer-events:none;">
+        <div style="background:var(--bg-card);border:1px solid var(--border-gold);border-radius:20px;padding:24px 48px;box-shadow:0 20px 60px rgba(0,0,0,0.8);">
+          <div class="vs-text" style="font-family:var(--font-display);font-size:64px;font-weight:900;background:linear-gradient(135deg,#ef4444,#b91c1c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">VS</div>
+          <div class="vs-opponent-name" style="font-family:var(--font-ui);font-size:20px;color:var(--text-primary);font-weight:700;letter-spacing:0.1em;"></div>
+        </div>
+      </div>
+
+      <!-- Round Result (hidden by default) -->
+      <div id="round-result" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:400;text-align:center;pointer-events:none;"></div>
+
+    </main>
+
+    <!-- ==================== RIGHT PANEL ==================== -->
+    <aside class="game-right">
+
+      <!-- Commander Panel -->
+      <div id="commander-panel" class="commander-panel">
+        <!-- Populated by CommanderSystem -->
+      </div>
+
+      <!-- Synergies -->
+      <div class="synergy-panel">
+        <div class="panel-title">🔗 Synergies</div>
+        <div class="synergy-list" id="synergy-list">
+          <!-- Populated by SynergySystem -->
+        </div>
+      </div>
+
+      <!-- Opponents -->
+      <div class="opponents-panel">
+        <div class="panel-title">⚔️ Players</div>
+        <div id="opponents-list">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ==================== FOOTER SHOP ==================== -->
+    <footer class="game-footer" style="position:relative;">
+      <!-- Shop Section -->
+      <div class="shop-section" id="shop-section">
+        <div style="display:flex;gap:8px;flex:1;" id="shop-heroes">
+          <!-- 5 hero slots — populated by Shop -->
+        </div>
+      </div>
+
+      <!-- Shop Controls -->
+      <div class="shop-controls">
+        <button class="btn-reroll" onclick="window.game.rerollShop()">
+          🎲 Reroll
+          <div class="reroll-cost">2 🟡</div>
+        </button>
+        <button class="btn-lock-shop" id="btn-lock-shop" onclick="window.game.toggleLockShop()">
+          🔓 Lock
+        </button>
+      </div>
+    </footer>
+
+  </div><!-- /#game -->
+
+  <!-- ==================== ENDGAME SCREEN ==================== -->
+  <div class="endgame-screen" id="endgame-screen">
+    <!-- Background effect -->
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(251,191,36,0.1),transparent 70%);pointer-events:none;"></div>
+
+    <div class="endgame-title" id="endgame-title">🏆 VICTORY!</div>
+    <div class="endgame-placement" id="endgame-placement">Placement: #1 of 8</div>
+
+    <div class="endgame-stats">
+      <div class="egs-item">
+        <div class="egs-value" id="stat-rounds">0</div>
+        <div class="egs-label">Rounds Survived</div>
+      </div>
+      <div class="egs-item">
+        <div class="egs-value" id="stat-wins">0</div>
+        <div class="egs-label">Battles Won</div>
+      </div>
+      <div class="egs-item">
+        <div class="egs-value" id="stat-losses">0</div>
+        <div class="egs-label">Battles Lost</div>
+      </div>
+      <div class="egs-item">
+        <div class="egs-value" id="stat-placement">—</div>
+        <div class="egs-label">Final Placement</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;">
+      <button class="btn btn-primary btn-lg" onclick="window.location.href='index.html'">
+        🏠 Back to Lobby
+      </button>
+      <button class="btn btn-secondary btn-lg" onclick="window.location.reload()">
+        🔄 Play Again
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== GAME INIT SCRIPT ==================== -->
+  <script type="module">
+    import { Game } from './js/game.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Load config from sessionStorage
+      let config = {};
+      try {
+        const stored = sessionStorage.getItem('mcgg_config');
+        if (stored) config = JSON.parse(stored);
+      } catch (e) { /* use defaults */ }
+
+      // Defaults if no config
+      if (!config.commanderId) config.commanderId = 'gogo';
+      if (!config.deckCards || !config.deckCards.length) {
+        config.deckCards = ['golden_shovel', 'free_reroll', 'xp_scroll', 'battle_cry'];
+      }
+      if (!config.playerName) config.playerName = 'GoGo Player';
+
+      // Update player name display
+      const nameEl = document.getElementById('player-name-display');
+      if (nameEl) nameEl.textContent = config.playerName;
+
+      // Init game
+      const game = new Game(config);
+      game.init();
+    });
+  </script>
+</body>
+</html>
