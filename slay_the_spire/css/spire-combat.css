@@ -3,7 +3,9 @@
    ========================================================================== */
 
 .combat-screen {
-  background: radial-gradient(circle at center, #1b1f28 0%, #0c0e12 85%, #050608 100%);
+  background: 
+    radial-gradient(circle at 50% 38%, rgba(18, 22, 38, 0.35) 0%, rgba(8, 10, 16, 0.82) 75%, #040508 100%),
+    url('../img/bg_combat_hd.jpg') center center / cover no-repeat;
   overflow: hidden;
 }
 
@@ -23,10 +25,9 @@
   left: 0;
   width: 100%;
   height: 65%;
-  background: 
-    linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(18,22,30,0.5) 100%),
-    repeating-linear-gradient(90deg, #10131a 0px, #10131a 120px, #161b24 120px, #161b24 240px);
-  border-bottom: 3px solid #272d38;
+  background: linear-gradient(180deg, rgba(3, 4, 7, 0.75) 0%, rgba(8, 12, 20, 0.2) 60%, transparent 100%);
+  pointer-events: none;
+  border-bottom: none;
 }
 
 /* Torchlight Flame VFX */
@@ -54,8 +55,9 @@
   left: 0;
   width: 100%;
   height: 35%;
-  background: linear-gradient(180deg, #14171d 0%, #0b0d11 100%);
-  box-shadow: inset 0 10px 25px rgba(0, 0, 0, 0.8);
+  background: linear-gradient(180deg, transparent 0%, rgba(5, 7, 10, 0.55) 45%, rgba(2, 3, 5, 0.95) 100%);
+  box-shadow: inset 0 20px 45px rgba(0, 0, 0, 0.85);
+  pointer-events: none;
 }
 
 /* Main Combat Arena Grid */
@@ -210,16 +212,17 @@
 
 /* Intent Box Above Enemy Head */
 .enemy-intent-box {
-  background: rgba(15, 17, 22, 0.92);
-  border: 1px solid var(--border-gold);
-  border-radius: 6px;
-  padding: 4px 8px;
-  margin-bottom: 8px;
+  background: linear-gradient(180deg, rgba(28, 16, 20, 0.96) 0%, rgba(12, 14, 18, 0.96) 100%);
+  border: 1.5px solid var(--border-gold);
+  border-radius: 8px;
+  padding: 5px 12px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.8);
+  gap: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.9), 0 0 16px rgba(255, 107, 107, 0.45);
   position: relative;
+  backdrop-filter: blur(8px);
 }
 
 .intent-icon {
@@ -341,19 +344,30 @@
   position: absolute;
   bottom: 24px;
   left: 36px;
-  width: 90px;
-  height: 90px;
+  width: 98px;
+  height: 98px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #ff8787 0%, #c92a2a 50%, #491212 90%);
-  border: 3px solid #ffa8a8;
-  box-shadow: 0 0 24px rgba(255, 77, 77, 0.7), inset 0 0 15px rgba(0, 0, 0, 0.9);
+  background: radial-gradient(circle at 35% 35%, #ffe066 0%, #ff6b6b 25%, #c92a2a 55%, #380809 90%);
+  border: 3.5px solid #ffd43b;
+  box-shadow: 
+    0 0 35px rgba(255, 107, 107, 0.85), 
+    0 0 70px rgba(255, 212, 59, 0.45),
+    inset 0 0 22px rgba(0, 0, 0, 0.95);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 60;
   cursor: pointer;
-  transition: transform 0.15s ease;
+  transition: transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28), box-shadow 0.2s ease;
+}
+
+.energy-orb-container:hover {
+  transform: scale(1.12);
+  box-shadow: 
+    0 0 50px rgba(255, 107, 107, 1), 
+    0 0 90px rgba(255, 212, 59, 0.65),
+    inset 0 0 25px rgba(0, 0, 0, 0.9);
 }
 
 .energy-orb-container:hover {
@@ -415,22 +429,44 @@
   position: absolute;
   bottom: 30px;
   right: 36px;
-  background: linear-gradient(180deg, #9e2a2b 0%, #4e1213 100%);
-  border: 2px solid var(--border-gold);
-  color: var(--text-gold);
+  background: linear-gradient(180deg, #b02a2b 0%, #6e1617 48%, #380809 100%);
+  border: 2.5px solid var(--border-gold);
+  color: #fff3bf;
   font-family: var(--font-spire);
   font-size: 16px;
-  font-weight: 800;
-  padding: 14px 28px;
-  border-radius: 8px;
+  font-weight: 900;
+  padding: 15px 32px;
+  border-radius: 10px;
   cursor: pointer;
-  letter-spacing: 1.5px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8), 0 0 10px rgba(197, 160, 89, 0.3);
-  transition: all 0.15s ease;
+  letter-spacing: 2px;
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.92), 
+    0 0 22px rgba(197, 160, 89, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 0 12px rgba(255, 77, 77, 0.5);
+  transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 2px;
   z-index: 60;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), 0 0 10px rgba(255, 212, 59, 0.5);
+}
+
+.end-turn-btn:hover {
+  transform: translateY(-4px) scale(1.06);
+  background: linear-gradient(180deg, #c92a2a 0%, #8b1819 48%, #4a0c0d 100%);
+  border-color: #ffe066;
+  box-shadow: 
+    0 14px 35px rgba(0, 0, 0, 0.95), 
+    0 0 35px rgba(255, 212, 59, 0.7),
+    0 0 20px rgba(255, 77, 77, 0.8);
+  color: #ffffff;
+}
+
+.end-turn-btn:active {
+  transform: translateY(2px) scale(0.98);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.9);
 }
 
 .end-turn-btn:hover {
@@ -1019,15 +1055,38 @@
 
 .ground-summon-circle {
   position: absolute;
-  bottom: -40px;
-  width: 680px;
-  height: 280px;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%) rotateX(68deg);
+  width: 840px;
+  height: 340px;
   border-radius: 50%;
-  border: 2px dashed rgba(255, 212, 59, 0.25);
-  box-shadow: 0 0 60px rgba(255, 107, 107, 0.15), inset 0 0 40px rgba(0, 240, 255, 0.1);
-  transform: rotateX(70deg);
+  border: 2.5px solid rgba(116, 192, 252, 0.5);
+  box-shadow: 
+    0 0 70px rgba(116, 192, 252, 0.45), 
+    0 0 120px rgba(130, 60, 240, 0.35),
+    inset 0 0 70px rgba(0, 240, 255, 0.3);
   pointer-events: none;
-  animation: rotateSummonCircle 30s linear infinite;
+  animation: rotateSummonCircle 40s linear infinite;
+  background: radial-gradient(ellipse at center, rgba(130, 60, 240, 0.14) 0%, rgba(0, 240, 255, 0.08) 50%, transparent 75%);
+}
+
+.ground-summon-circle::before {
+  content: '';
+  position: absolute;
+  inset: 24px;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 212, 59, 0.55);
+  box-shadow: inset 0 0 25px rgba(255, 212, 59, 0.25);
+  animation: rotateSummonCircle 24s linear infinite reverse;
+}
+
+.ground-summon-circle::after {
+  content: '';
+  position: absolute;
+  inset: 60px;
+  border-radius: 50%;
+  border: 1.5px dotted rgba(255, 107, 107, 0.45);
 }
 
 .ground-summon-circle::before {

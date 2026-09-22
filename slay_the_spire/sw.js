@@ -6,7 +6,7 @@
  * dan sinkronisasi pembaruan otomatis untuk Progressive Web App (PWA).
  */
 
-const CACHE_NAME = 'shadowspire-cache-v1';
+const CACHE_NAME = 'shadowspire-cache-v2';
 
 const CORE_ASSETS = [
   './',
@@ -36,7 +36,9 @@ const CORE_ASSETS = [
   './icons/icon-maskable-512.png',
   './icons/apple-touch-icon.png',
   './icons/favicon.png',
-  './icons/favicon.ico'
+  './icons/favicon.ico',
+  './img/bg_combat_hd.jpg',
+  './img/bg_menu_hd.jpg'
 ];
 
 // 1. Install Event: Pra-unduh dan cache semua aset inti game

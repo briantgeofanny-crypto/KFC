@@ -7,8 +7,8 @@
    ========================================================================== */
 .intro-splash-screen {
   background: 
-    radial-gradient(ellipse at center, rgba(140, 20, 20, 0.45) 0%, rgba(10, 10, 14, 0.98) 75%),
-    linear-gradient(180deg, #1a080a 0%, #050508 100%);
+    radial-gradient(circle at 50% 40%, rgba(20, 15, 30, 0.35) 0%, rgba(6, 7, 10, 0.82) 75%, #030406 100%),
+    url('../img/bg_menu_hd.jpg') center center / cover no-repeat;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -105,8 +105,8 @@
    ========================================== */
 .main-menu-screen {
   background: 
-    radial-gradient(ellipse at 50% 25%, rgba(130, 20, 25, 0.5) 0%, rgba(8, 9, 12, 0.98) 75%),
-    linear-gradient(180deg, #140708 0%, #060709 100%);
+    radial-gradient(circle at 50% 35%, rgba(20, 15, 30, 0.38) 0%, rgba(6, 7, 10, 0.85) 75%, #030406 100%),
+    url('../img/bg_menu_hd.jpg') center center / cover no-repeat;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -166,10 +166,10 @@
 }
 
 .menu-btn {
-  background: rgba(22, 26, 35, 0.85);
-  border: 1px solid rgba(197, 160, 89, 0.35);
-  border-radius: 8px;
-  color: #dee2e6;
+  background: linear-gradient(180deg, rgba(32, 38, 52, 0.92) 0%, rgba(16, 20, 28, 0.96) 100%);
+  border: 1.5px solid var(--border-gold);
+  border-radius: 9px;
+  color: #f1f3f5;
   font-family: var(--font-spire);
   font-size: 17px;
   font-weight: 700;
@@ -180,10 +180,11 @@
   gap: 14px;
   cursor: pointer;
   letter-spacing: 1.5px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
-  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(10px);
 }
 
 .menu-btn:hover {
