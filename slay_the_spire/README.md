@@ -24,6 +24,9 @@ Sebagai salah satu dari Pahlawan Terpilih yang masih bertahan, Anda harus memanj
 ## ⚔️ Fitur Utama Permainan
 
 ### 1. 🎴 Sistem Pertarungan Kartu Taktis (*Turn-Based Combat*)
+
+![Tampilan Arena Pertarungan Kartu In-Game](./screenshot_gameplay.jpg)
+
 - **Manajemen Energi & Tangan**: Setiap giliran dimulai dengan alokasi energi tetap untuk memainkan kombinasi kartu Serangan (*Attack*), Keterampilan Bertahan (*Skill/Block*), dan Kekuatan Pasif Berkelanjutan (*Power*).
 - **Mekanisme Intent Musuh**: Setiap aksi monster (menyerang, memperkuat diri, memberikan debuff, atau bertahan) ditelegrafkan secara transparan di atas kepala musuh, menuntut perhitungan strategi matang setiap ronde.
 - **Efek Status & Debuff Kompleks**: *Vulnerable, Weak, Frail, Strength, Dexterity, Poison, Metallicize, Barricade*, dan puluhan sinergi status lainnya.
