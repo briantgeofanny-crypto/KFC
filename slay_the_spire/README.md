@@ -2,6 +2,8 @@
 
 > **Dark Fantasy Roguelike Deckbuilder Card Game** — Dibangun secara murni dengan arsitektur web modern (**Vanilla HTML5, Vanilla CSS3, dan Vanilla JavaScript ES6+**), dilengkapi kapabilitas **Progressive Web App (PWA)**, sistem audio prosedural, dan mekanisme pertarungan taktis mendalam.
 
+![Tampilan Awal Game ShadowSpire](./screenshot_preview.jpg)
+
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
